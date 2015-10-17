@@ -1,0 +1,24 @@
+-buildpath: \
+	osgi.core;version=5.0,\
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	${junit},\
+	libs/weka-3.7.12.jar;version=file,\
+	Keratoconus-Analysis-API;version=latest,\
+	Keratoconus-Configuration-API;version=latest,\
+	Keratoconus-Datafiles-API;version=latest
+Bundle-Version: 1.0.0.${tstamp}
+Private-Package: be.uza.keratoconus.analysis.impl
+Service-Component: *
+Include-Resource: /resource,/libs/weka-3.7.12.jar
+Bundle-ClassPath: ., weka-3.7.12.jar
+Export-Package:  \
+	be.uza.keratoconus.analysis.api
+Bundle-Name: Keratoconus Analysis Implementation
+Bundle-Description: Contains the Analyser (wrapper around the WEKA SMO implementation), and \
+	the Collator which gathers information from various files to provide input \
+	to the Analyser.
+Bundle-Category: Keratoconus
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8

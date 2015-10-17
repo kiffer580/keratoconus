@@ -1,0 +1,17 @@
+-buildpath: \
+	osgi.core,\
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	${junit},\
+	Keratoconus-Configuration-API;version=latest
+Bundle-Version: 1.0.0.${tstamp}
+Private-Package: be.uza.keratoconus.configuration.impl
+Service-Component: *
+Export-Package: be.uza.keratoconus.configuration.api
+Bundle-Name: Keratoconus Configuration Impl
+Bundle-Description: Contains the implementation of the Configuration Service.
+Bundle-Category: Keratoconus
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
