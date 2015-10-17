@@ -1,0 +1,11 @@
+-buildpath: \
+	biz.aQute.bnd.annotation,\
+	Keratoconus-Datafiles-API;version=latest
+Bundle-Version: 1.0.0.${tstamp}
+Export-Package: be.uza.keratoconus.analysis.api
+Bundle-Name: Keratoconus Analysis API
+Bundle-Description: Contains the API of the Analyser (wrapper around the WEKA SMO implementation).
+Bundle-Category: Keratoconus
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8

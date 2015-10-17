@@ -1,0 +1,11 @@
+-buildpath: biz.aQute.bnd.annotation
+Bundle-Version: 1.0.0.${tstamp}
+Export-Package: be.uza.keratoconus.configuration.api
+Bundle-Name: Keratonus Configuration API
+Bundle-Description: Contains the API of the Configuration Service which provides common configuration \
+	data to all modules.
+Bundle-Category: Keratoconus
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
