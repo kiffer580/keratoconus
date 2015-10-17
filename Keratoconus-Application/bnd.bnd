@@ -1,0 +1,30 @@
+-buildpath: \
+	osgi.core;version=5.0,\
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	${junit},\
+	libs/weka-3.7.12.jar;version=file,\
+	libs/image4j.jar;version=file,\
+	com.google.gson,\
+	Keratoconus-Configuration-API;version=latest,\
+	JavaFX-Wrapper;version=latest,\
+	Keratoconus-Datafiles-API;version=latest
+Bundle-Version: 0.0.0.${tstamp}
+Private-Package: \
+	be.uza.keratoconus.systemtrayapp,\
+	be.uza.keratoconus.userprefs.api,\
+	be.uza.keratoconus.userprefs.impl
+Service-Component: *
+Include-Resource: /libs/weka-3.7.12.jar,/libs/image4j.jar
+Bundle-ClassPath: ., weka-3.7.12.jar,image4j.jar
+ImportDynamic-Package: *
+ImportPackage: *
+-metatype: *
+Export-Package:  \
+	be.uza.keratoconus.systemtrayapp.api
+Bundle-Name: Keratoconus Application
+Bundle-Description: Contains the code which presents the graphical interface to the user.
+Bundle-Category: Keratoconus
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
