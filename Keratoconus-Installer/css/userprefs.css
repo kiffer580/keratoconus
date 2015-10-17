@@ -1,0 +1,25 @@
+{
+    -fx-font-smoothing-type: gray;
+    -fx-wrap-text: true;
+    -fx-font-size: 10pt; -fx-font-weight: normal; -fx-font-style: normal;
+}
+
+.ka-root {
+	-fx-max-width: 300px; -fx-padding: 10px;
+}
+
+.ka-header {
+	-fx-font-size: 12pt; -fx-wrap-text: true;
+}
+
+.ka-title {
+	-fx-font-weight: bold;
+}
+
+.ka-description {
+	-fx-font: 8pt Arial; -fx-wrap-text: true;
+}
+
+.ka-footer {
+	-fx-font: oblique 10pt Arial; -fx-wrap-text: true;
+}

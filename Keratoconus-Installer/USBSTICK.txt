@@ -1,0 +1,8 @@
+USB STICK
+
+If the files in this directory are copied to (a directory on) a USB Stick, then the application can be run from
+the stick without needing to install anything on the user's computer.
+
+In use the application will write log files to the user's %APPLOCALDATA%\Keratoconus\logging directory, 
+and if use is made of the "User preferences" menu then the preferences will be stored in 
+%APPLOCALDATA%\Keratoconus\prefs.

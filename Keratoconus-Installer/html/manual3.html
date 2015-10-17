@@ -1,0 +1,43 @@
+<html>
+  <head><title>Keratoconus Assistant - Presentation of results</title>
+    <link rel="stylesheet" type="text/css" href="../css/manual.css">
+  </head>
+  <body>
+    <div class="manual-container">
+     <select style="float:right;padding:0.25em" onChange="window.location.href=this.value">
+    	<option>Go to page &hellip;</option>
+    	<option value="manual1.html">1. General principles</option>
+    	<option value="manual2.html">2. Dubious cases</option>
+    	<option value="manual3.html">3. Presentation of results</option>
+    	<option value="manual4.html">4. Patient record files</option>
+    	<option value="manual5.html">5. User preferences</option>
+    	<option value="manual6.html">6. Errors and logging</option>
+	</select>
+     <h2>Presentation of results</h2>
+     <p>The application offers several ways to present the results of the analysis to the user:
+     <ul>
+     <li>animation of the application's icon in the task bar - the colour gives an indication of the category.
+     <li>showing a small pop-up message (&ldquo;balloon&rdquo;) next to the task bar icon.
+     <li>a pop-up window which shows the patient ID, any warnings reported by the Pentacam software, and the full results of the analysis.
+     </ul> 
+     <p>It is possible to select which of these are used via the &ldquo;Results display&rdquo; sub-menu of the
+     <a href="manual5.html">User&nbsp;preferences&nbsp;&hellip;</a> menu.
+     Even if the pop-up window is not enabled here it is always available by double-clicking on the task bar icon.
+     It can be dismissed by clicking anywhere inside the window.
+     <p>The pop-up window is divided into four main zones:
+     <dl>
+     <dt>Identity zone<dd>This contains the patient's name, date of birth and ID and the details of the examination (eye, date, and time).
+     <dt>Warning zone<dd>If present this contains a warning (yellow background) or error (red background) reported by the Pentacam software.
+     In the case of an error the data is considered to be unusable and the remaining zones will not be shown.
+     <dt>Headline zone<dd>This contains a short description of the classification (one or two words), shown in block capitals.
+     If the classification is <span class=N>No indication</span> or <span class=Ambiguous>Thick Cornea</span> then the detail zone will not be shown.
+     <dt>Detail zone<dd>Here the most likely classifications are listed in smaller print.
+     The &ldquo;?&rdquo; button provides access to a graphical presentation of the probabilities estimates provided by the model.
+     </dl>
+      <div class="manual-footer">
+       <input type="button" value="previous page: Dubious cases" style="float:left" onClick="parent.location='manual2.html'">
+       <input type="button" value="next page: Patient record files" style= "float:right" onClick="parent.location='manual4.html'">
+    </div>
+  </div> 
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+  <head><title>Keratoconus Assistant - Patient record files</title>
+    <link rel="stylesheet" type="text/css" href="../css/manual.css">
+  </head>
+  <body>
+    <div class="manual-container">
+     <select style="float:right;padding:0.25em" onChange="window.location.href=this.value">
+    	<option>Go to page &hellip;</option>
+    	<option value="manual1.html">1. General principles</option>
+    	<option value="manual2.html">2. Dubious cases</option>
+    	<option value="manual3.html">3. Presentation of results</option>
+    	<option value="manual4.html">4. Patient record files</option>
+    	<option value="manual5.html">5. User preferences</option>
+    	<option value="manual6.html">6. Errors and logging</option>
+	</select>
+     <h2>Patient record files</h2>
+     
+     <p>In order to provide a permanent record, the full output of each analysis is append to the file <span style="font-family: monospaced">C:\Pentacam\Keratoconus-Assistant.CSV</span>.
+     <p>If a target directory has been selected using the &ldquo;Patient records&rdquo; sub-menu of the
+     <a href="manual5.html">User&nbsp;preferences&nbsp;&hellip;</a> menu, a JPEG file containing this information will be created
+     in this directory for each patient examination.  The file name has the same structure 
+     (<i>LastName_FirstName_Eye_Date_Time_</i>KeratoconusAssistant.JPG) as the graphical files created by the Pentacam software,
+     making it easy to correlate the files.
+      <div class="manual-footer">
+       <input type="button" value="previous page: Presentation of results" style="float:left" onClick="parent.location='manual3.html'">
+       <input type="button" value="next page: User preferences" style= "float:right" onClick="parent.location='manual5.html'">
+    </div>
+  </div> 
+  </body>
+</html>

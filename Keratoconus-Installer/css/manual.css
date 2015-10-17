@@ -1,0 +1,18 @@
+ 	body { -fx-font-smoothing-type: gray; }
+    h1 { font: bold  14pt Verdana,sans-serif }
+    h2 { font: bold  12pt Verdana,sans-serif }
+    p,dt,dd { font: 11pt Verdana,sans-serif }
+    a {text-decoration: none;}
+    ul { font: 11pt Verdana,sans-serif }
+    dt { font-weight: bold }
+    
+    .manual-container {height:100%; border-collapse:collapse; display : table;}
+    .manual-footer {display: table-footer-group}
+    
+    .KTC { color : rgb(128, 0, 0); }
+    .PR { color : rgb(96, 32, 0); }
+    .FF { color : rgb(128, 64, 0); }
+    .Astig { color : rgb(0, 96, 96); }
+    .N { color : rgb(0, 128, 0); }
+    .Ambiguous { color : rgb(128, 64, 0); }
+

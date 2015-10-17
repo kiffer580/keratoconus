@@ -1,0 +1,41 @@
+<html>
+  <head><title>Keratoconus Assistant - Dubious cases</title>
+    <link rel="stylesheet" type="text/css" href="../css/manual.css">
+  </head>
+  <body>
+    <div class="manual-container">
+    <select style="float:right;padding:0.25em" onChange="window.location.href=this.value">
+    	<option>Go to page &hellip;</option>
+    	<option value="manual1.html">1. General principles</option>
+    	<option value="manual2.html">2. Dubious cases</option>
+    	<option value="manual3.html">3. Presentation of results</option>
+    	<option value="manual4.html">4. Patient record files</option>
+    	<option value="manual5.html">5. User preferences</option>
+    	<option value="manual6.html">6. Errors and logging</option>
+	</select>
+    <h2>Dubious cases</h2>
+    <p>In most cases the neural network will choose confidently for one of the five categories, but occasionally it
+    is unable to make such a clear-cut decision.  In this case the result will be classified as:
+    <dl>
+    <dt><span class=Ambiguous>Ambiguous</span>
+    <dd>Unable to confidently assign the data to one of the five main categories.
+    </dl>
+    <p>In the case of patients with an unusually thick cornea the neural net model does not work well.
+    Therefore it is not applied in such cases, and the result will be displayed as:
+    <dl>
+    <dt><span class=Ambiguous>Thick Cornea</span>
+    <dd>Abnormally thick cornea, no classification can be performed.
+    </dl>
+    <p>Even when the result of the classification
+    seems clear it can only be regarded as a suggestion as to whether further tests should be performed and not as a diagnosis (positive or
+    negative).  Although the system has been trained on a large number of cases and has exhibited a high degree of accuracy in trials (>90%),
+    it is no substitute for the judgement of a trained ophthalmologist.  The classification is also based entirely on the tomography data,
+    whereas the ophthalmologist also has access to other sources of information such as the patient's own description, family history,
+    presence of other pathologies commonly found in association with keratoconus, etc..
+    <div class="manual-footer">
+     <input type="button" value="previous page: General principles" style="float:left" onClick="parent.location='manual1.html'">
+    <input type="button" value="next page: Presentation of results" style= "float:right" onClick="parent.location='manual3.html'">
+    </div>
+  </div>
+  </body>
+</html>

@@ -1,0 +1,43 @@
+<html>
+  <head><title>Keratoconus Assistant - General principles</title>
+    <link rel="stylesheet" type="text/css" href="../css/manual.css">
+  </head>
+  <body>
+    <div class="manual-container">
+    <select style="float:right;padding:0.25em" onChange="window.location.href=this.value">
+    	<option>Go to page &hellip;</option>
+    	<option value="manual1.html">1. General principles</option>
+    	<option value="manual2.html">2. Dubious cases</option>
+    	<option value="manual3.html">3. Presentation of results</option>
+    	<option value="manual4.html">4. Patient record files</option>
+    	<option value="manual5.html">5. User preferences</option>
+    	<option value="manual6.html">6. Errors and logging</option>
+	</select>
+    <h1>About the Keratoconus Assistant</h1>
+    <h2>General principles</h2>
+    <p>The Keratoconus Assistant is an expert system developed at the University Hospital (Universitair Ziekenhuis) of Antwerp
+    to assist ophthalmic practitioners in detecting cases of Keratoconus.  It functions in association with the Oculus Pentacam
+    software; each time that a corneal tomography scan is performed or a previous scan is recalled, the data provided by the Pentacam
+    software is fed into a neural network which has been trained to recognise possible cases of Keratoconus.
+    The result of this analysis is then displayed in a pop-up window.</p>
+    <p>The neural network attempts to classify the tomography data into one of five categories:</p>
+    <dl>
+    <dt><span class=KTC>Keratoconus</span>
+    <dd>There is an indication of frank keratoconus.
+    <dt><span class=PR>Post-refractive</span>
+    <dd>The patient shows signs of having undergone post-refractive surgery, the aftermath of which can mimic keratoconus and present some of the same risks.
+        The judgement of the ophthalmologist is essential to distinguish reliably between these two categories.
+    <dt><span class=FF>Suspicious</span>
+    <dd>There is some indication of keratoconus, but if it is present then it is not fully developed.
+    (Sometimes referred to as &ldquo;forme fruste&rdquo; keratoconus).
+    <dt><span class=Astig>Astigmatism</span>
+    <dd>The patient exhibits pronounced astigmatism but not of the kind associated with keratoconus.
+    <dt><span class=N>No indication</span>
+    <dd>There is little or no indication of keratoconus, strong astigmatism, or refractive surgery.
+    </dl>
+      <div class="manual-footer">
+        <input type="button" value="next page: Dubious cases" style="float:right" onClick="parent.location='manual2.html'">
+      </div>
+    </div>
+  </body>
+</html>

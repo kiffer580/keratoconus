@@ -1,0 +1,8 @@
+INSTALLER
+
+keratonus32.msi installs all necessary files (launcher, JRE, application jar file, configuration files) in 
+C:\Program Files (x86)\Keratoconus Assistant.  This is a 32-bit version, which runs on Windows 7 and later.
+
+In use the application also writes log files to the user's %APPLOCALDATA%\Keratoconus\logging directory, 
+and if use is made of the "User preferences" menu then the preferences will be stored in 
+%APPLOCALDATA%\Keratoconus\prefs.

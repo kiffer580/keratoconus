@@ -1,0 +1,4 @@
+ 	body { -fx-font-smoothing-type: gray; height: 100px; }
+    h1 { font: bold  14pt Verdana,sans-serif; text-align: center; }
+    p.blurb { font: 11pt Verdana,sans-serif; text-align: center; }
+

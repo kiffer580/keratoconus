@@ -1,0 +1,47 @@
+<html>
+  <head><title>Keratoconus Assistant - User preferences</title>
+    <link rel="stylesheet" type="text/css" href="../css/manual.css">
+  </head>
+  <body>
+    <div class="manual-container">
+     <select style="float:right;padding:0.25em" onChange="window.location.href=this.value">
+    	<option>Go to page &hellip;</option>
+    	<option value="manual1.html">1. General principles</option>
+    	<option value="manual2.html">2. Dubious cases</option>
+    	<option value="manual3.html">3. Presentation of results</option>
+    	<option value="manual4.html">4. Patient record files</option>
+    	<option value="manual5.html">5. User preferences</option>
+    	<option value="manual6.html">6. Errors and logging</option>
+	</select>
+     <h2>User preferences</h2>
+     
+     <p>Many aspects of the application's behaviour can be modified by right-clicking on the system tray icon and selecting the 
+     &ldquo;User&nbsp;preferences&nbsp;&hellip;&rdquo; option from the menu which is presented.
+     <dl>
+     <dt>Patent records
+     <dd>Selects the directory to which the graphical patient record files will be written.
+     <dt>Result display
+     <dd>Selects which options (animate taskbar icon, show taskbar messages, show floating popups) are used to provide visual feedback to the user.
+     <dt>Popup window
+     <dd>Determines the &ldquo;decorations&rdquo; which are applied to the pop-up window ranging from none at all (UNDECORATED) to a full
+     window frame complete with minimise, maximise, and close buttons.  Selecting UTILITY has the side-effect that the window is not shown
+     in the task bar or when pressing ALT_TAB.
+     <dt>Popup position
+     <dd>Selects the position on the screen where the pop-up will appear.  Note that the pop-up can be dragged to another position
+     on the screen, even if it does not have a title bar; however each new patient report will appear at the selected position.
+     <dt>Popup display time
+     <dd>Allows the time for which the pop-up is displayed to be set, according to the category of the result;
+     for example you could chose to have <span class="N">No indication</span> show only for a few seconds, while the main indications
+     <span class="KTC">Keratoconus</span> and <span class="PR">Post-refractive</span> are shown for much longer.
+     <dt>Chart type
+     <dd>Choice of chart type used for the detailed breakdown of probabilities: bar chart or pie chart.
+     </dl>
+     <p>Changes are effected and persisted immediately, except that a change to <b>Popup window</b> will only become effective
+     after restarting the application.
+      <div class="manual-footer">
+       <input type="button" value="previous page: Patient record files" style="float:left" onClick="parent.location='manual4.html'">
+       <input type="button" value="next page: Errors and logging" style= "float:right" onClick="parent.location='manual6.html'">
+    </div>
+  </div> 
+  </body>
+</html>
