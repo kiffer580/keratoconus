@@ -1,0 +1,39 @@
+
+.root, .about {  -fx-padding: 10 40 20 40; }     
+.title { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(187, 46, 64); }
+.identity { -fx-font-size: 12pt; }
+.headline-KTC { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(128, 0, 0); }
+.headline-Astig { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(0, 96, 96); }
+.headline-N { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(0, 96, 96); }
+.headline-ambiguous { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(128, 64, 0); }
+.explanation { -fx-font-size: 12pt; -fx-font-weight: bold; -fx-fill: rgb(64, 64, 64); }
+
+.close { -fx-node-hpos: right; -fx-background-color:  red; -fx-background-radius: 20;  -fx-background-insets: 5; -fx-text-fill: white;  -fx-font-weight: bold; -fx-font-size: 12pt; }
+.info  { -fx-node-hpos: right; -fx-background-color: blue; -fx-background-radius: 20;  -fx-background-insets: 5; -fx-text-fill: white;  -fx-font-weight: bold; -fx-font-size: 12pt; }
+
+.status-warning { -fx-font-size: 12pt; -fx-font-weight: bold; -fx-fill: rgb(128, 64, 0); }
+.status-error   { -fx-font-size: 12pt; -fx-font-weight: bold; -fx-fill: rgb(128, 0, 0); }
+.status-icon-warning { -fx-background-image: url("../image/warning.png"); 
+                       -fx-background-repeat: no-repeat; -fx-background-position: center; }
+.status-icon-error { -fx-background-image: url("../image/error.png"); 
+                     -fx-background-repeat: no-repeat; -fx-background-position: center; }
+
+.summary-KTC   { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(128, 0, 0); }
+.summary-FF    { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(128, 64, 0); }
+.summary-Astig { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(0, 96, 96); }
+.summary-N     { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: rgb(0, 128, 0); }
+.summary-plain { -fx-font-size: 14pt; -fx-font-weight: bold; -fx-fill: dimgray; }
+.info-pie-KTC { -fx-pie-color: rgb(128, 0, 0); }
+.info-pie-FF { -fx-pie-color: rgb(128, 64, 0); }
+.info-pie-Astig { -fx-pie-color: rgb(0, 96, 96); }
+.info-pie-N { -fx-pie-color: rgb(0, 128, 0); }
+
+.html-KTC { color : rgb(128, 0, 0); }
+.html-FF { color : rgb(128, 64, 0); }
+.html-Astig { color : rgb(0, 96, 96); }
+.html-N { color : rgb(0, 128, 0); }
+
+h1 { font: bold  14pt Verdana,sans-serif }
+p,dt,dd { font: 12pt Verdana,sans-serif }
+dt { font-weight: bold }
+

@@ -1,0 +1,24 @@
+-exportcontents: javafx.*,com.*
+-buildpath:  \
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	${junit},\
+	osgi.core;version=5.0
+Bundle-Version: 1.0.1.${tstamp}
+Private-Package:  \
+	be.uza.keratoconus.javafxwrapper
+Include-Resource: /resource	
+Service-Component: *
+DynamicImport-Package: *
+ImportPackage: *
+Export-Package: \
+	be.uza.keratoconus.javafxwrapper.api,\
+	javafx.*
+Bundle-Name: JavaFX Wrapper
+Bundle-Description: Wraps the horribly retarded JavaFX API into something a modern application \
+	can think of using.
+Bundle-Category: Keratoconus
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
