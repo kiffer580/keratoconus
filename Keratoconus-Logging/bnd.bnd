@@ -1,0 +1,22 @@
+-buildpath: \
+	osgi.core;version=5.0,\
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	${junit},\
+	Keratoconus-Datafiles-API;version=latest,\
+	Keratoconus-Configuration-API;version=latest,\
+	JavaFX-Wrapper;version=latest
+Bundle-Version: 1.0.0.${tstamp}
+Private-Package: be.uza.keratoconus.logging
+ImportDynamic-Package: *
+ImportPackage: *
+
+Service-Component: *
+Bundle-Name: Keratoconus Logging
+Bundle-Description: Contains the LogListeners which are responsible for logging to disc and \
+	for notifying the user via pop-ups if warnings or errors occur. 
+Bundle-Category: Keratoconus
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
