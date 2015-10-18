@@ -60,11 +60,4 @@ public class PopupDecorationPreferencesWindow extends AbstractPreferencesWindow
 		return new VBox(decoratedButton, utilityButton, undecoratedButton,
 				transparentButton);
 	}
-
-	/*
-	 * 
-	 * 28 11:00 Deurne Clara Snellingsstraat 27 Inkomen bewijs
-	 * 
-	 * schulden
-	 */
 }

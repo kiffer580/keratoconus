@@ -42,11 +42,4 @@ public class ChartTypePreferencesWindow extends AbstractPreferencesWindow
 		});
 		return new VBox(barButton, pieButton);
 	}
-
-	/*
-	 * 
-	 * 28 11:00 Deurne Clara Snellingsstraat 27 Inkomen bewijs
-	 * 
-	 * schulden
-	 */
 }

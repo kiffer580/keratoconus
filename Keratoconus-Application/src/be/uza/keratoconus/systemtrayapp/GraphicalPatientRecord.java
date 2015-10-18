@@ -172,7 +172,7 @@ public class GraphicalPatientRecord implements EventHandler {
 	}
 
 	private void handleAnalysisResultsEvent(AnalysisResultsEvent event) {
-		if (!event.isRecall()) {
+		if (!event.isRecall() && guiConfig.isPatientRecordEnabled()) {
 			final String headlineKey = event.getHeadlineKey();
 			final Map<String, String> examData = event.getExam().getExamData();
 			final Map<String, Double> distribution = event.getDistribution();

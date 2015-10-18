@@ -153,7 +153,7 @@ public interface UserPreferences {
 	/**
 	 * Display the dialogue with which the user can select the patient record directory.
 	 */
-	void showPatientRecordDirectoryDialogue();
+//	void showPatientRecordDirectoryDialogue();
 	
 	/**
 	 * Get the path (relative to the <tt>/resource</tt> directory of the bundle) to the basic icon for the app.
@@ -176,5 +176,25 @@ public interface UserPreferences {
 	 * @param string
 	 */
 	void setDefaultWindowStageStyle(String string);
+
+	/**
+	 * Configure whether graphical patient records are to be created.
+	 * Also persists the setting in the user preferences.
+	 * @param newVal true to enable, false to disable.
+	 */
+	void configureGraphicalPatientRecordOnOff(Boolean newVal);
+
+	/**
+	 * Configure the directory where graphical patient records are to be created.
+	 * Also persists the setting in the user preferences.
+	 * @param path absolute path to the directory.
+	 */
+	void configurePatientRecordDirectory(String path);
+
+	/**
+	 * Check whether graphical patient records are enabled.
+	 * @return true if enabled, else false.
+	 */
+	boolean isPatientRecordEnabled();
 
 }

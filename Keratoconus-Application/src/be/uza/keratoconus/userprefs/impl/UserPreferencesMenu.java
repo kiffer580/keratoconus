@@ -45,9 +45,9 @@ public class UserPreferencesMenu extends Menu {
 		super(label);
 		this.prefsMenu = menu;
 		
-		ComparableMenuItem patientRecordItem = new ComparableMenuItem("Patient records", 0);
-		add(patientRecordItem);
-		patientRecordItem.addActionListener(event -> Platform.runLater(() -> prefsMenu.showPatientRecordDirectoryDialogue()));
+//		ComparableMenuItem patientRecordItem = new ComparableMenuItem("Patient records", 0);
+//		add(patientRecordItem);
+//		patientRecordItem.addActionListener(event -> Platform.runLater(() -> prefsMenu.showPatientRecordDirectoryDialogue()));
 	}
 
 	public void addPreferencesWindow(PreferencesWindow pw, int rank) {

@@ -62,6 +62,7 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		private Map<Category, Double> displayTimeSeconds;
 		private StageStyle mainPopupStageStyle;
 		private Pos mainPopupPosition;
+		private boolean patientRecordsEnabled;
 		private String patientRecordDirectory;
 		private ChartType detailChartType;
 		private String baseIconPath;
@@ -221,7 +222,15 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		writeConfig(prefs);
 	}
 
-	private void configurePatientRecordDirectory(String path) {
+	@Override
+	public void configureGraphicalPatientRecordOnOff(Boolean b) {
+		logInfo("Setting graphical patient records enabled to " + b);
+		prefs.patientRecordsEnabled = b;
+		writeConfig(prefs);
+	}
+
+	@Override
+	public void configurePatientRecordDirectory(String path) {
 		logInfo("Setting patient record directory to " + path);
 		prefs.patientRecordDirectory = path;
 		writeConfig(prefs);
@@ -296,6 +305,11 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	}
 
 	@Override
+	public boolean isPatientRecordEnabled() {
+		return prefs.patientRecordsEnabled;
+	}
+
+	@Override
 	public double getDisplayTimeSeconds(Category cat) {
 		final Double value = prefs.displayTimeSeconds.get(cat);
 		return value == null ? defaultDisplayTimeSeconds : value;
@@ -346,21 +360,21 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		return prefs.patientRecordDirectory;
 	}
 
-	@Override
-	public void showPatientRecordDirectoryDialogue() {
-		DirectoryChooser directoryChooser = new DirectoryChooser();
-		directoryChooser.setTitle(pentacamConfigurationService
-				.getApplicationTitle()
-				+ " - choose directory where patient records will be stored");
-		directoryChooser.setInitialDirectory(FileSystems.getDefault()
-				.getPath(prefs.patientRecordDirectory).toFile());
-		Platform.runLater(() -> {
-			File chosen = directoryChooser.showDialog(null);
-			if (chosen != null) {
-				configurePatientRecordDirectory(chosen.getAbsolutePath());
-			}
-		});
-	}
+//	@Override
+//	public void showPatientRecordDirectoryDialogue() {
+//		DirectoryChooser directoryChooser = new DirectoryChooser();
+//		directoryChooser.setTitle(pentacamConfigurationService
+//				.getApplicationTitle()
+//				+ " - choose directory where patient records will be stored");
+//		directoryChooser.setInitialDirectory(FileSystems.getDefault()
+//				.getPath(prefs.patientRecordDirectory).toFile());
+//		Platform.runLater(() -> {
+//			File chosen = directoryChooser.showDialog(null);
+//			if (chosen != null) {
+//				configurePatientRecordDirectory(chosen.getAbsolutePath());
+//			}
+//		});
+//	}
 
 	@Override
 	public void setDefaultWindowStageStyle(String wss) {
