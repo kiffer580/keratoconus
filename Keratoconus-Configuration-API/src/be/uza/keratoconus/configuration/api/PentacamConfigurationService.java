@@ -44,32 +44,12 @@ public interface PentacamConfigurationService {
 	int getLogLevel();
 
 	/**
-	 * Names of the common fields which occur in several files (although not
-	 * always in the same position). These fields will be presented in the
-	 * master file in the order given (before the data fields).
-	 */
-	String[] getCommonFields();
-
-	/**
-	 * Names of the fields which are used internally to create a unique key.
-	 * (Must be a subset of the common fields).
-	 */
-	String[] getKeyFields();
-
-	/**
 	 * The character which is used to concatenate the key fields into a single
 	 * string.
 	 * 
 	 * @return
 	 */
 	char getKeyMemberSeparator();
-
-	/**
-	 * Base names of all the files to be used. They will be used in the order
-	 * given, and the fields in the master file will be presented in the same
-	 * order (after the common fields).
-	 */
-	String[] getFileBaseNames();
 
 	/**
 	 * Get a map of classifications. These are the same as are used in the

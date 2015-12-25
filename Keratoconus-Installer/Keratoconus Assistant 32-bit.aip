@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="12.2.1" version="12.3" Modules="simple" RootPath="." Language="en" Id="{94105C84-58C9-4D92-992D-1F2E41D5CEC6}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="12.2.1" version="12.4.2" Modules="simple" RootPath="." Language="en" Id="{94105C84-58C9-4D92-992D-1F2E41D5CEC6}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="ALLUSERS" Value="1" MultiBuildValue="DefaultBuild:2"/>
@@ -7,10 +7,10 @@
     <ROW Property="ARPPRODUCTICON" Value="JRlarge.exe" Type="8"/>
     <ROW Property="CTRLS" Value="2"/>
     <ROW Property="Manufacturer" Value="UZA"/>
-    <ROW Property="ProductCode" Value="1033:{BBA9125A-FE91-4AA7-A352-0395C22C7755} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{C55CF903-8CCC-4248-A781-C1C1753B4F61} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Keratoconus Assistant"/>
-    <ROW Property="ProductVersion" Value="1.0.1" Type="32"/>
+    <ROW Property="ProductVersion" Value="1.0.2" Type="32"/>
     <ROW Property="RUNAPPLICATION" Value="1" Type="4"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{E68DD484-7409-4CB6-8CE8-48D74B755668}"/>

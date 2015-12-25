@@ -6,7 +6,8 @@
 	org.apache.felix.metatype,\
 	com.opencsv,\
 	Keratoconus-Datafiles-API;version=latest,\
-	Keratoconus-Configuration-API;version=latest
+	Keratoconus-Configuration-API;version=latest,\
+	Keratoconus-Model-API;version=latest
 Bundle-Version: 1.0.0.${tstamp}
 Private-Package: be.uza.keratoconus.datafiles.impl
 Service-Component: *

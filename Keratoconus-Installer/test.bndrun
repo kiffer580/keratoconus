@@ -29,6 +29,7 @@
 	Keratoconus-Analysis-Impl;version=latest,\
 	Keratoconus-Datafiles-Impl;version=latest,\
 	Keratoconus-Logging;version=latest,\
+	Keratoconus-Model-Impl;version=latest,\
 	JavaFX-Wrapper;version=latest,\
 	Keratoconus-Application;version=latest,\
 	biz.aQute.bnd.annotation;version='[2.4.0,2.4.1)',\

@@ -19,6 +19,7 @@ import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.analysis.api.Analyser;
 import be.uza.keratoconus.datafiles.api.PatientExam;
+import be.uza.keratoconus.model.api.ClassificationModelService;
 
 @Component(enabled = true)
 public class PreTrainedModel implements Analyser {
@@ -26,7 +27,7 @@ public class PreTrainedModel implements Analyser {
 private static final String SEMICOLON = ";";
 
 	private static weka.classifiers.functions.SMO classifier;
-	private PentacamConfigurationService pentacamConfigurationService;
+	private ClassificationModelService classificationModelService;
 	private LogService logService;
 	
 	private Map<String, String> examData;
@@ -36,9 +37,9 @@ private static final String SEMICOLON = ";";
 	private ComponentContext ownComponentContext;
 
 	@Reference
-	protected void setPentacamConfigurationService(
-			PentacamConfigurationService pcs) {
-		pentacamConfigurationService = pcs;
+	protected void setClassificationModelService(
+			ClassificationModelService cms) {
+		classificationModelService = cms;
 	}
 
 	@Reference
@@ -65,7 +66,7 @@ private static final String SEMICOLON = ";";
 		for (Map.Entry<String, String> entry : examData.entrySet()) {
 			String attributeName = entry.getKey();
 			String attributeValue = entry.getValue();
-			if (!Arrays.asList(pentacamConfigurationService.getCommonFields())
+			if (!Arrays.asList(classificationModelService.getCommonFields())
 					.contains(attributeName) && !"Surface".equals(attributeName)) {
 				headerLine += attributeName + SEMICOLON;
 				dataLine += attributeValue + SEMICOLON;

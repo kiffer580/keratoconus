@@ -74,9 +74,6 @@ public class PentacamConfigurationServiceProvider implements
 	private Path prefsDirectoryPath;
 	private Path loggingDirectoryPath;
 	private int logLevel;
-	private String[] fileBaseNames;
-	private String[] keyFields;
-	private String[] commonFields;
 	private char keyMemberSeparator;
 	private String classifications;
 	private double headlineThreshold;
@@ -91,9 +88,6 @@ public class PentacamConfigurationServiceProvider implements
 		prefsDirectoryPath = getDirectoryPath(config.userpref_directory());
 		loggingDirectoryPath = getDirectoryPath(config.logging_directory());
 		logLevel = interpretLogLevel(config.logging_level());
-		fileBaseNames = Utils.splitOnComma(config.pentacam_files());
-		keyFields = Utils.splitOnComma(config.pentacam_fields_key());
-		commonFields = Utils.splitOnComma(config.pentacam_fields_common());
 		keyMemberSeparator = config.pentacam_key_separator().charAt(0);
 		classifications = config.classifications();
 		headlineThreshold = config.threshold_headline();
@@ -149,21 +143,6 @@ public class PentacamConfigurationServiceProvider implements
 	@Override
 	public int getLogLevel() {
 		return logLevel;
-	}
-
-	@Override
-	public String[] getFileBaseNames() {
-		return fileBaseNames;
-	}
-
-	@Override
-	public String[] getCommonFields() {
-		return commonFields;
-	}
-
-	@Override
-	public String[] getKeyFields() {
-		return keyFields;
 	}
 
 	@Override

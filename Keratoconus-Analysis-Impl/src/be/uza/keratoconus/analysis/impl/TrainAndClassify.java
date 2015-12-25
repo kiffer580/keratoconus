@@ -15,9 +15,9 @@ import weka.core.converters.CSVLoader;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.analysis.api.Analyser;
 import be.uza.keratoconus.datafiles.api.PatientExam;
+import be.uza.keratoconus.model.api.ClassificationModelService;
 
 @Component(enabled = false)
 public class TrainAndClassify implements Analyser {
@@ -29,18 +29,18 @@ public class TrainAndClassify implements Analyser {
 
 	private static weka.classifiers.functions.SMO classifier;
 	private static Instances trainData;
-	private PentacamConfigurationService pentacamConfigurationService;
+	private ClassificationModelService classificationModelService;
 	private Map<String, String> examData;
 	private Instance instance;
 	private int cIdx;
 	private String[] classAttributeNames;
 
 	@Reference
-	protected void setPentacamConfigurationService(
-			PentacamConfigurationService pcs) {
-		pentacamConfigurationService = pcs;
+	protected void setClassificationModelService(
+			ClassificationModelService cms) {
+		classificationModelService = cms;
 	}
-
+	
 	@Activate
 	public void activate() throws Exception {
 		classifier = new SMO();
@@ -62,7 +62,7 @@ public class TrainAndClassify implements Analyser {
 		for (Map.Entry<String, String> entry : examData.entrySet()) {
 			String attributeName = entry.getKey();
 			String attributeValue = entry.getValue();
-			if (!Arrays.asList(pentacamConfigurationService.getCommonFields())
+			if (!Arrays.asList(classificationModelService.getCommonFields())
 					.contains(attributeName) && !"Surface".equals(attributeName)) {
 				headerLine += attributeName + SEMICOLON;
 				dataLine += attributeValue + SEMICOLON;

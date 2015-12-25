@@ -21,6 +21,7 @@ import be.uza.keratoconus.configuration.api.ClassificationService;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.datafiles.event.AnalysisResultsEvent;
 import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
+import be.uza.keratoconus.model.api.ClassificationModelService;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.ignore, properties = EventConstants.EVENT_TOPIC
 		+ "=" + AnalysisResultsEventConstants.ANALYSIS_RESULTS_TOPIC)
@@ -30,12 +31,19 @@ public class CsvPatientRecord implements EventHandler {
 	private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
 
 	private LogService logService;
+	private ClassificationModelService classificationModelService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private ClassificationService classificationService;
 
 	@Reference
 	protected void setLogService(LogService ls) {
 		logService = ls;
+	}
+
+	@Reference
+	protected void classificationModelService(
+			ClassificationModelService cms) {
+		this.classificationModelService = cms;
 	}
 
 	@Reference
@@ -83,7 +91,7 @@ public class CsvPatientRecord implements EventHandler {
 	}
 
 	private void writeCsvHeader(PrintWriter writer) {
-		for (String fieldName : pentacamConfigurationService.getCommonFields()) {
+		for (String fieldName : classificationModelService.getCommonFields()) {
 			writer.print(fieldName + ";");
 		}
 		writer.print("Exam Eye;");
@@ -100,7 +108,7 @@ public class CsvPatientRecord implements EventHandler {
 	private void writeCsvRecord(PrintWriter writer,
 			Map<String, String> examData, String headlineKey,
 			Map<String, Double> distribution) {
-		for (String fieldName : pentacamConfigurationService.getCommonFields()) {
+		for (String fieldName : classificationModelService.getCommonFields()) {
 			writer.print(examData.get(fieldName) + ";");
 		}
 		writer.print(examData.get("Exam Eye") + ";");

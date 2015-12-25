@@ -27,6 +27,7 @@ import aQute.bnd.annotation.metatype.Meta;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.datafiles.api.PentacamField;
 import be.uza.keratoconus.datafiles.api.PentacamFile;
+import be.uza.keratoconus.model.api.ClassificationModelService;
 
 import com.opencsv.CSVParser;
 
@@ -44,6 +45,7 @@ public class PentacamCsvFile implements PentacamFile {
 	private static final String CSV = ".CSV";
 	private final Map<String, String[]> records = new LinkedHashMap<String, String[]>();
 	private String fileName;
+	private ClassificationModelService classificationModelService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private Path directoryPath;
 	private Config config;
@@ -75,6 +77,11 @@ public class PentacamCsvFile implements PentacamFile {
 	@Reference
 	protected void setLogService(LogService logService) {
 		this.logService = logService;
+	}
+
+	@Reference
+	protected void setClassificationModelService(ClassificationModelService cms) {
+		classificationModelService = cms;
 	}
 
 	@Reference
@@ -156,9 +163,9 @@ public class PentacamCsvFile implements PentacamFile {
 	private List<String[]> readCsvFile() {
 		List<String[]> newRecords = new ArrayList<String[]>();
 		final List<String> commonFieldNames = Arrays
-				.asList(pentacamConfigurationService.getCommonFields());
+				.asList(classificationModelService.getCommonFields());
 		final List<String> keyFieldNames = Arrays
-				.asList(pentacamConfigurationService.getKeyFields());
+				.asList(classificationModelService.getKeyFields());
 		if (fieldSeparator == 0) {
 			fieldSeparator = guessFieldSeparator();
 		}

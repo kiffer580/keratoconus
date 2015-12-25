@@ -3,7 +3,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>.\keratoconus.jar</jar>
-  <outfile>C:\Users\Chris Gray\UZA\uza-workspace\Keratoconus-Installer\keratoconus32.exe</outfile>
+  <outfile>C:\Users\Chris Gray\UZA\keratoconus-workspace\Keratoconus-Installer\keratoconus32.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>.</chdir>
