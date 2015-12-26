@@ -11,6 +11,9 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface ModelService {
 
+	public static final String SERIALIZED_MODEL = "/model/smo.model";
+	public static final String CONFIG_PROPERTIES = "/config/model.properties";
+
 	/**
 	 * Names of the common fields which occur in several files (although not
 	 * always in the same position). These fields will be presented in the

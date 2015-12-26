@@ -7,7 +7,6 @@
 Bundle-Version: 0.0.0.${tstamp}
 Private-Package: be.uza.keratoconus.model.edegem
 Service-Component: *
-Include-Resource: /resource
 Export-Package: \
 	be.uza.keratoconus.model.api
 Bundle-Name: Model Impl (Edegem)

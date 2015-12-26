@@ -11,8 +11,8 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import be.uza.keratoconus.model.api.ModelService;
 
-@Component(properties = "name=edegem")
-public class ClassificationModelEdegem implements ModelService {
+@Component
+public class ModelServiceImpl implements ModelService {
 
 	private static final String COMMA = ",";
 
@@ -25,10 +25,9 @@ public class ClassificationModelEdegem implements ModelService {
 	@Activate
 	protected void activate() throws IOException {
 		InputStream stream = getClass().getResourceAsStream(
-				"/config/edegem.properties");
+				ModelService.CONFIG_PROPERTIES);
 		Properties config = new Properties();
 		config.load(stream);
-		System.out.println(config);
 		fileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
 		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
 		commonFields = ((String) config.get("pentacam.fields.common"))
@@ -67,7 +66,7 @@ public class ClassificationModelEdegem implements ModelService {
 	@Override
 	public SMO getClassifier() throws Exception {
 		return (SMO) weka.core.SerializationHelper.read(getClass()
-				.getResourceAsStream("/model/edegem.model"));
+				.getResourceAsStream(ModelService.SERIALIZED_MODEL));
 
 	}
 }
