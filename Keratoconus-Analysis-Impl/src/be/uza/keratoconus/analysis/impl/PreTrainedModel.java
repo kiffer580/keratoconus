@@ -16,7 +16,6 @@ import weka.core.converters.CSVLoader;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.analysis.api.Analyser;
 import be.uza.keratoconus.datafiles.api.PatientExam;
 import be.uza.keratoconus.model.api.ClassificationModelService;
@@ -26,7 +25,7 @@ public class PreTrainedModel implements Analyser {
 
 private static final String SEMICOLON = ";";
 
-	private static weka.classifiers.functions.SMO classifier;
+	private weka.classifiers.functions.SMO classifier;
 	private ClassificationModelService classificationModelService;
 	private LogService logService;
 	

@@ -1,0 +1,34 @@
+-classpath: jar/weka-3.7.12.jar
+Export-Package: \
+	weka;version=3.7.12,\
+	weka.associations;version=3.7.12,\
+	weka.attributeSelection;version=3.7.12,\
+	weka.classifiers;version=3.7.12,\
+	weka.classifiers.*;version=3.7.12,\
+	weka.core;version=3.7.12,\
+	weka.core.*;version=3.7.12,\
+	weka.clusterers;version=3.7.12,\
+	weka.datagenerators;version=3.7.12,\
+	weka.datagenerators.*;version=3.7.12,\
+	weka.estimators;version=3.7.12,\
+	weka.experiment;version=3.7.12,\
+	weka.experiment.*;version=3.7.12,\
+	weka.filters;version=3.7.12,\
+	weka.filters.*;version=3.7.12,\
+	weka.gui;version=3.7.12,\
+	weka.gui.*;version=3.7.12
+Import-Package:  *
+DynamicImport-Package: *
+Bundle-Version: 3.7.12
+Bundle-Name: Weka Wrapper
+Bundle-Description: Wrapper for the WEKA data mining library
+Bundle-Category: Keratoconus
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
+Private-Package: \
+	java_cup.runtime,\
+	org.bounce,\
+	org.bounce.net,\
+	org.pentaho.packageManagement,
