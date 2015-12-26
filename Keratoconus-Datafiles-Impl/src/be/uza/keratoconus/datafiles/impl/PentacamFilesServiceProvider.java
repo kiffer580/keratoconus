@@ -3,8 +3,8 @@ package be.uza.keratoconus.datafiles.impl;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -20,6 +20,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
@@ -31,16 +33,26 @@ import be.uza.keratoconus.datafiles.api.PentacamFile;
 import be.uza.keratoconus.datafiles.api.PentacamFilesService;
 import be.uza.keratoconus.model.api.ClassificationModelService;
 
+/**
+ * This component provides the PentacamFilesService. However it will only
+ * register this service once it has successfully created an instance of
+ * <code>PentacamCsvFile</code> for every file which is needed; hence the empty
+ * &lsquo;provide&rsquo; list in the @Component annotation.
+ * 
+ * @author Chris Gray
+ *
+ */
 @Component(immediate = true, provide = {})
-// Do not be fooled by the above, we will register a PentacamFilesService when
-// we are good and ready
 public class PentacamFilesServiceProvider implements PentacamFilesService {
+
+	private static final String BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE = PentacamCsvFile.class
+			.getName();// "be.uza.keratoconus.datafiles.impl.PentacamCsvFile";
 
 	private Map<String, PentacamFile> files = new ConcurrentHashMap<String, PentacamFile>();
 	private Lock filesReadyLock = new ReentrantLock();
 	private Condition filesReadyCondition = filesReadyLock.newCondition();
 	private boolean allFilesPresent;
-	private String[] fileBaseNames;
+	private List<String> fileBaseNames;
 	private TimeUnit timeoutUnit = TimeUnit.SECONDS;
 	private long timeout = 300L;
 	private List<PentacamFile> allFiles = new ArrayList<PentacamFile>();
@@ -49,6 +61,12 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	private AtomicReference<Thread> serviceRegistrationThreadRef = new AtomicReference<>();
 	private AtomicReference<ServiceRegistration> registrationRef = new AtomicReference<>();
 	private ClassificationModelService classificationModelService;
+	private ConfigurationAdmin configurationAdmin;
+
+	@Reference
+	protected void setConfigurationAdmin(ConfigurationAdmin ca) {
+		configurationAdmin = ca;
+	}
 
 	@Reference
 	protected void setLogService(LogService logService) {
@@ -56,8 +74,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	@Reference
-	protected void setClassificationModelService(
-			ClassificationModelService cms) {
+	protected void setClassificationModelService(ClassificationModelService cms) {
 		this.classificationModelService = cms;
 	}
 
@@ -74,9 +91,10 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	@Activate
 	protected void activate(ComponentContext cc) throws IOException {
 		bundleContext = cc.getBundleContext();
-		fileBaseNames = classificationModelService.getFileBaseNames();
-		Thread thread = new Thread(
-				() -> registerServiceWhenAllFilesArePresent());
+		Thread thread = new Thread(() -> {
+			createPentacamFileConfigurations();
+			registerServiceWhenAllFilesArePresent();
+		});
 		serviceRegistrationThreadRef.set(thread);
 		thread.start();
 	}
@@ -90,6 +108,40 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 		ServiceRegistration registration = registrationRef.getAndSet(null);
 		if (registration != null) {
 			registration.unregister();
+		}
+	}
+
+	private void createPentacamFileConfigurations() {
+		fileBaseNames = new ArrayList<>();
+		for (String fbn : classificationModelService.getFileBaseNames()) {
+			fileBaseNames.add(fbn);
+			fileBaseNames.add(fbn + "-LOAD");
+			String separator = classificationModelService
+					.getSeparatorForFile(fbn);
+			String fields = classificationModelService.getFieldsOfFile(fbn);
+			createComponentConfiguration(
+					BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE, fbn,
+					separator, fields);
+			createComponentConfiguration(
+					BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE, fbn
+							+ "-LOAD", separator, fields);
+		}
+	}
+
+	private void createComponentConfiguration(String factoryPid,
+			String fileBaseName, String separator, String fields) {
+		try {
+			Configuration c;
+			c = configurationAdmin.createFactoryConfiguration(factoryPid, null);
+			Dictionary<String, Object> dict = new Hashtable<>();
+			dict.put("pentacam.file.name", fileBaseName);
+			dict.put("pentacam.field.separator", separator);
+			dict.put("pentacam.fields", fields);
+			logService.log(LogService.LOG_INFO, BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE
+							+ " config: " + dict);
+			c.update(dict);
+		} catch (IOException e) {
+			logService.log(LogService.LOG_ERROR, "Failed to launch PentacamCsvFile configuration for " + fileBaseName);
 		}
 	}
 
@@ -128,7 +180,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 
 	@Override
 	public List<PentacamFile> getAllFiles() throws FileNotFoundException {
-		 return allFiles;
+		return allFiles;
 	}
 
 	@Override
@@ -148,8 +200,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 				return;
 			}
 
-			HashSet<String> neededSet = new HashSet<>(
-					Arrays.asList(fileBaseNames));
+			HashSet<String> neededSet = new HashSet<>(fileBaseNames);
 			neededSet.removeAll(availableFileBaseNames);
 			logService.log(LogService.LOG_INFO, "Have files "
 					+ availableFileBaseNames + ", still need " + neededSet);

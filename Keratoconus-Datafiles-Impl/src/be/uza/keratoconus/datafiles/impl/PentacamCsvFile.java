@@ -37,7 +37,7 @@ import com.opencsv.CSVParser;
  * @author Chris Gray
  *
  */
-@Component(configurationPolicy = ConfigurationPolicy.require, immediate = true, provide = { PentacamFile.class }, properties = "pentacam.file.format=CSV")
+@Component(configurationPolicy = ConfigurationPolicy.require, immediate = true, properties = "pentacam.file.format=CSV")
 public class PentacamCsvFile implements PentacamFile {
 
 	private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
