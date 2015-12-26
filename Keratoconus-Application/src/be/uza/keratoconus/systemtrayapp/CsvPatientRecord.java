@@ -21,7 +21,7 @@ import be.uza.keratoconus.configuration.api.ClassificationService;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.datafiles.event.AnalysisResultsEvent;
 import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
-import be.uza.keratoconus.model.api.ClassificationModelService;
+import be.uza.keratoconus.model.api.ModelService;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.ignore, properties = EventConstants.EVENT_TOPIC
 		+ "=" + AnalysisResultsEventConstants.ANALYSIS_RESULTS_TOPIC)
@@ -31,7 +31,7 @@ public class CsvPatientRecord implements EventHandler {
 	private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
 
 	private LogService logService;
-	private ClassificationModelService classificationModelService;
+	private ModelService classificationModelService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private ClassificationService classificationService;
 
@@ -42,7 +42,7 @@ public class CsvPatientRecord implements EventHandler {
 
 	@Reference
 	protected void classificationModelService(
-			ClassificationModelService cms) {
+			ModelService cms) {
 		this.classificationModelService = cms;
 	}
 

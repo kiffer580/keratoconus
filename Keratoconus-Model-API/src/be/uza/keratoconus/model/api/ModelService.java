@@ -1,18 +1,15 @@
 package be.uza.keratoconus.model.api;
 
-import java.nio.file.Path;
-import java.util.Map;
-
 import aQute.bnd.annotation.ProviderType;
 
 /**
- * Service which provides global configuration parameters to other components.
+ * Service which is used to interact with the WEKA-based model.
  * 
  * @author Chris Gray
  *
  */
 @ProviderType
-public interface ClassificationModelService {
+public interface ModelService {
 
 	/**
 	 * Names of the common fields which occur in several files (although not
@@ -48,5 +45,10 @@ public interface ClassificationModelService {
 	 */
 	String getFieldsOfFile(String fbn);
 	
+	/**
+	 * Get the WEKA classifier which has been trained to this model.
+	 * @return
+	 * @throws Exception
+	 */
 	weka.classifiers.functions.SMO getClassifier() throws Exception;
 }

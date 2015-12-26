@@ -9,10 +9,10 @@ import java.util.Properties;
 import weka.classifiers.functions.SMO;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
-import be.uza.keratoconus.model.api.ClassificationModelService;
+import be.uza.keratoconus.model.api.ModelService;
 
 @Component(properties = "name=edegem")
-public class ClassificationModelEdegem implements ClassificationModelService {
+public class ClassificationModelEdegem implements ModelService {
 
 	private static final String COMMA = ",";
 

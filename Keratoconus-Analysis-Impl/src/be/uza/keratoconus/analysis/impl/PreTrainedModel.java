@@ -18,7 +18,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.analysis.api.Analyser;
 import be.uza.keratoconus.datafiles.api.PatientExam;
-import be.uza.keratoconus.model.api.ClassificationModelService;
+import be.uza.keratoconus.model.api.ModelService;
 
 @Component(enabled = true)
 public class PreTrainedModel implements Analyser {
@@ -26,7 +26,7 @@ public class PreTrainedModel implements Analyser {
 private static final String SEMICOLON = ";";
 
 	private weka.classifiers.functions.SMO classifier;
-	private ClassificationModelService classificationModelService;
+	private ModelService classificationModelService;
 	private LogService logService;
 	
 	private Map<String, String> examData;
@@ -37,7 +37,7 @@ private static final String SEMICOLON = ";";
 
 	@Reference
 	protected void setClassificationModelService(
-			ClassificationModelService cms) {
+			ModelService cms) {
 		classificationModelService = cms;
 	}
 

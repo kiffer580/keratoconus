@@ -31,7 +31,7 @@ import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.datafiles.api.PentacamFile;
 import be.uza.keratoconus.datafiles.api.PentacamFilesService;
-import be.uza.keratoconus.model.api.ClassificationModelService;
+import be.uza.keratoconus.model.api.ModelService;
 
 /**
  * This component provides the PentacamFilesService. However it will only
@@ -60,7 +60,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	private LogService logService;
 	private AtomicReference<Thread> serviceRegistrationThreadRef = new AtomicReference<>();
 	private AtomicReference<ServiceRegistration> registrationRef = new AtomicReference<>();
-	private ClassificationModelService classificationModelService;
+	private ModelService classificationModelService;
 	private ConfigurationAdmin configurationAdmin;
 
 	@Reference
@@ -74,7 +74,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	@Reference
-	protected void setClassificationModelService(ClassificationModelService cms) {
+	protected void setClassificationModelService(ModelService cms) {
 		this.classificationModelService = cms;
 	}
 
