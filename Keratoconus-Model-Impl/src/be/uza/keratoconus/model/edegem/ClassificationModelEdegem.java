@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import weka.classifiers.functions.SMO;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import be.uza.keratoconus.model.api.ClassificationModelService;
@@ -23,13 +24,15 @@ public class ClassificationModelEdegem implements ClassificationModelService {
 
 	@Activate
 	protected void activate() throws IOException {
-		InputStream stream = getClass().getResourceAsStream("/config/edegem.properties");
+		InputStream stream = getClass().getResourceAsStream(
+				"/config/edegem.properties");
 		Properties config = new Properties();
 		config.load(stream);
 		System.out.println(config);
 		fileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
 		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
-		commonFields = ((String) config.get("pentacam.fields.common")).split(COMMA);
+		commonFields = ((String) config.get("pentacam.fields.common"))
+				.split(COMMA);
 		for (String fbn : fileBaseNames) {
 			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
 			fields.put(fbn, (String) config.get(fbn + ".fields"));
@@ -59,5 +62,12 @@ public class ClassificationModelEdegem implements ClassificationModelService {
 	@Override
 	public String getFieldsOfFile(String fbn) {
 		return fields.get(fbn);
+	}
+
+	@Override
+	public SMO getClassifier() throws Exception {
+		return (SMO) weka.core.SerializationHelper.read(getClass()
+				.getResourceAsStream("/model/edegem.model"));
+
 	}
 }

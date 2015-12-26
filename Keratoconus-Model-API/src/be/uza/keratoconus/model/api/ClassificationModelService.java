@@ -47,4 +47,6 @@ public interface ClassificationModelService {
 	 * @return the field names, as a comma-separated list.
 	 */
 	String getFieldsOfFile(String fbn);
+	
+	weka.classifiers.functions.SMO getClassifier() throws Exception;
 }

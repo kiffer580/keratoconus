@@ -1,7 +1,11 @@
--buildpath: biz.aQute.bnd.annotation
+-buildpath: \
+	biz.aQute.bnd.annotation,\
+	Weka-Wrapper;version=latest
 Bundle-Version: 1.0.0.${tstamp}
-Export-Package: Keratonus-Model-API
-Export-Package: be.uza.keratoconus.model.api
+Export-Package: \
+	be.uza.keratoconus.model.api,\
+	weka.classifiers.*,\
+	weka.core
 Bundle-Name: Keratonus Model API
 Bundle-Description: Contains the API of the Model Service which must be implemented by each \
 	model plug-in.

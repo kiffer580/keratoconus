@@ -50,10 +50,8 @@ private static final String SEMICOLON = ";";
 	@Activate
 	public void activate(ComponentContext cc) throws Exception {
 		this.ownComponentContext = cc;
-		classifier = (SMO) weka.core.SerializationHelper
-				.read(getClass().getResourceAsStream("/model/trained"));
+		classifier = classificationModelService.getClassifier();
 		classAttributeNames = classifier.classAttributeNames();
-		// TODO check all have been assigned
 	}
 
 	@Override
