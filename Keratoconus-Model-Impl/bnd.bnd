@@ -1,0 +1,18 @@
+-buildpath: \
+	osgi.core,\
+	osgi.cmpn,\
+	biz.aQute.bnd.annotation,\
+	${junit},\
+	Keratoconus-Model-API;version=latest
+Bundle-Version: 0.0.0.${tstamp}
+Private-Package: be.uza.keratoconus.model.edegem
+Service-Component: *
+Export-Package: \
+	be.uza.keratoconus.model.api
+Bundle-Name: Model Impl (Edegem)
+Bundle-Description: Contains the first implementation of the Model Service, developed in Edegem.
+Bundle-Category: Keratocoonus
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
