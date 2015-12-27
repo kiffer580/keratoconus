@@ -197,4 +197,6 @@ public interface UserPreferences {
 	 */
 	boolean isPatientRecordEnabled();
 
+	String getSelectedModelName();
+
 }

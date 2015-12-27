@@ -46,7 +46,7 @@ import be.uza.keratoconus.model.api.ModelService;
 public class PentacamFilesServiceProvider implements PentacamFilesService {
 
 	private static final String BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE = PentacamCsvFile.class
-			.getName();// "be.uza.keratoconus.datafiles.impl.PentacamCsvFile";
+			.getName();
 
 	private Map<String, PentacamFile> files = new ConcurrentHashMap<String, PentacamFile>();
 	private Lock filesReadyLock = new ReentrantLock();
@@ -60,7 +60,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	private LogService logService;
 	private AtomicReference<Thread> serviceRegistrationThreadRef = new AtomicReference<>();
 	private AtomicReference<ServiceRegistration> registrationRef = new AtomicReference<>();
-	private ModelService classificationModelService;
+	private ModelService modelService;
 	private ConfigurationAdmin configurationAdmin;
 
 	@Reference
@@ -74,8 +74,8 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	@Reference
-	protected void setClassificationModelService(ModelService cms) {
-		this.classificationModelService = cms;
+	protected void setModelService(ModelService ms) {
+		this.modelService = ms;
 	}
 
 	@Reference(dynamic = true, multiple = true, optional = true)
@@ -113,12 +113,21 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 
 	private void createPentacamFileConfigurations() {
 		fileBaseNames = new ArrayList<>();
-		for (String fbn : classificationModelService.getFileBaseNames()) {
+		
+		// BARF
+		while (modelService.getFileBaseNames() == null) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				logService.log(LogService.LOG_ERROR,
+						"Failed to get PentacamFile base names", e);
+			}
+		}
+		for (String fbn : modelService.getFileBaseNames()) {
 			fileBaseNames.add(fbn);
 			fileBaseNames.add(fbn + "-LOAD");
-			String separator = classificationModelService
-					.getSeparatorForFile(fbn);
-			String fields = classificationModelService.getFieldsOfFile(fbn);
+			String separator = modelService.getSeparatorForFile(fbn);
+			String fields = modelService.getFieldsOfFile(fbn);
 			createComponentConfiguration(
 					BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE, fbn,
 					separator, fields);
@@ -137,11 +146,14 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 			dict.put("pentacam.file.name", fileBaseName);
 			dict.put("pentacam.field.separator", separator);
 			dict.put("pentacam.fields", fields);
-			logService.log(LogService.LOG_INFO, BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE
+			logService.log(LogService.LOG_INFO,
+					BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE
 							+ " config: " + dict);
 			c.update(dict);
 		} catch (IOException e) {
-			logService.log(LogService.LOG_ERROR, "Failed to launch PentacamCsvFile configuration for " + fileBaseName);
+			logService.log(LogService.LOG_ERROR,
+					"Failed to launch PentacamCsvFile configuration for "
+							+ fileBaseName);
 		}
 	}
 

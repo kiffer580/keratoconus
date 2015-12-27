@@ -5,7 +5,7 @@
 	${junit},\
 	Keratoconus-Model-API;version=latest
 Bundle-Version: 0.0.0.${tstamp}
-Private-Package: be.uza.keratoconus.model.edegem
+Private-Package: be.uza.keratoconus.model.impl
 Service-Component: *
 Export-Package: \
 	be.uza.keratoconus.model.api

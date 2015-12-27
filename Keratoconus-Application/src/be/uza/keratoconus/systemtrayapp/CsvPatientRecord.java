@@ -31,7 +31,7 @@ public class CsvPatientRecord implements EventHandler {
 	private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
 
 	private LogService logService;
-	private ModelService classificationModelService;
+	private ModelService modelService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private ClassificationService classificationService;
 
@@ -41,9 +41,8 @@ public class CsvPatientRecord implements EventHandler {
 	}
 
 	@Reference
-	protected void classificationModelService(
-			ModelService cms) {
-		this.classificationModelService = cms;
+	protected void setModelService(ModelService ms) {
+		this.modelService = ms;
 	}
 
 	@Reference
@@ -91,7 +90,7 @@ public class CsvPatientRecord implements EventHandler {
 	}
 
 	private void writeCsvHeader(PrintWriter writer) {
-		for (String fieldName : classificationModelService.getCommonFields()) {
+		for (String fieldName : modelService.getCommonFields()) {
 			writer.print(fieldName + ";");
 		}
 		writer.print("Exam Eye;");
@@ -108,7 +107,7 @@ public class CsvPatientRecord implements EventHandler {
 	private void writeCsvRecord(PrintWriter writer,
 			Map<String, String> examData, String headlineKey,
 			Map<String, Double> distribution) {
-		for (String fieldName : classificationModelService.getCommonFields()) {
+		for (String fieldName : modelService.getCommonFields()) {
 			writer.print(examData.get(fieldName) + ";");
 		}
 		writer.print(examData.get("Exam Eye") + ";");

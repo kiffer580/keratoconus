@@ -6,7 +6,6 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,7 +20,6 @@ import java.util.Map.Entry;
 
 import javafx.application.Platform;
 import javafx.geometry.Pos;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.StageStyle;
 
 import org.osgi.framework.BundleException;
@@ -66,6 +64,7 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		private String patientRecordDirectory;
 		private ChartType detailChartType;
 		private String baseIconPath;
+		public String selectedModelName;
 	}
 
 	private UserPrefsDAO prefs;
@@ -452,6 +451,11 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	private void logException(Exception e, String message) {
 		logService.log(ownComponentContext.getServiceReference(),
 				LogService.LOG_WARNING, message, e);
+	}
+
+	@Override
+	public String getSelectedModelName() {
+		return prefs.selectedModelName;
 	}
 
 }
