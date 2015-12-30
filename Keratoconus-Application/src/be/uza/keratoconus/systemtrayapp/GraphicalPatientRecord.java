@@ -167,8 +167,9 @@ public class GraphicalPatientRecord implements EventHandler {
 	}
 
 	@Override
-	public void handleEvent(Event event) {
-		handleAnalysisResultsEvent((AnalysisResultsEvent) event);
+	public void handleEvent(final Event event) {
+		// start a new thread so that the pop-up window doesn't have to wait for us
+		new Thread(()->handleAnalysisResultsEvent((AnalysisResultsEvent) event)).start();
 	}
 
 	private void handleAnalysisResultsEvent(AnalysisResultsEvent event) {
