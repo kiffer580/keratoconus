@@ -1,0 +1,9 @@
+
+Include-Resource: /resource
+Bundle-Version: 0.0.0.${tstamp}
+Fragment-Host: Keratoconus-Model-Impl
+Import-Package: !*
+
+javac.source:           1.8
+javac.target:           1.8
+javac.compliance:       1.8
