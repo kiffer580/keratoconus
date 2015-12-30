@@ -14,29 +14,7 @@ import aQute.bnd.annotation.ProviderType;
 @ProviderType
 public interface ModelService {
 
-	/**
-	 * Get the names of all available models in this installation.
-	 */
-	List<String> getAvailableModelNames();
-
-	/**
-	 * Select the model to be used. This should be called before any of the
-	 * methods {@link #getCommonFields()}, {@link #getKeyFields()},
-	 * {@link #getFileBaseNames()}, {@link #getFieldsOfFile(String)},
-	 * {@link #getSeparatorForFile(String)} are called.
-	 * 
-	 * @param name
-	 *            The name of the model (must be one of those returned by
-	 *            {@link #getAvailableModelNames()}).
-	 * @throws Exception 
-	 */
-	void selectModel(String name) throws Exception;
-
-	/**
-	 * Get the name of the currently selected model.
-	 * @return
-	 */
-	String getSelectedModelName();
+	public static final String MODEL_NAME = "model.name";
 
 	/**
 	 * Names of the common fields which occur in several files (although not

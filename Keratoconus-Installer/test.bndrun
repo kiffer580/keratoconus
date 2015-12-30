@@ -31,6 +31,7 @@
 	Keratoconus-Logging;version=latest,\
 	Keratoconus-Model-Impl;version=latest,\
 	Keratoconus-Model-Edegem;version=latest,\
+	Keratoconus-Model-Paris;version=latest,\
 	JavaFX-Wrapper;version=latest,\
 	Weka-Wrapper;version=latest,\
 	Keratoconus-Application;version=latest,\

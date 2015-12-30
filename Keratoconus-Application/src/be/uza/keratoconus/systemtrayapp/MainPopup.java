@@ -66,6 +66,7 @@ import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
 import be.uza.keratoconus.datafiles.event.FileCreatedEvent;
 import be.uza.keratoconus.datafiles.event.FileEvent;
 import be.uza.keratoconus.datafiles.event.FileEventConstants;
+import be.uza.keratoconus.model.api.AvailableModelsService;
 import be.uza.keratoconus.model.api.ModelService;
 import be.uza.keratoconus.userprefs.api.UserPreferences;
 import be.uza.keratoconus.userprefs.api.UserPreferences.ChartType;
@@ -208,7 +209,7 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 
 	private LogService logService;
 
-	private ModelService modelService;
+	private AvailableModelsService availableModelsService;
 
 	@Reference
 	protected void setPentacamConfigurationService(
@@ -232,8 +233,8 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 	}
 
 	@Reference
-	protected void setModelService(ModelService ms) {
-		this.modelService = ms;
+	protected void setAvailableModelsService(AvailableModelsService ams) {
+		this.availableModelsService = ams;
 	}
 
 	@Activate
@@ -248,7 +249,7 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 				.detail_chart_type());
 		headlineThreshold = pentacamConfigurationService.getHeadlineThreshold();
 		parseParameters(params);
-		List<String> availableModelNames = modelService.getAvailableModelNames();
+		List<String> availableModelNames = availableModelsService.getAvailableModelNames();
 		System.out.println("MainPopup: available model names: " + availableModelNames);
 		String selectedModelName = userPreferences.getSelectedModelName();
 		if (selectedModelName == null) {
@@ -258,7 +259,7 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 		else {
 			logService.log(LogService.LOG_INFO, "Model selected in user preferences: " + selectedModelName);
 		}
-		modelService.selectModel(selectedModelName);
+		availableModelsService.selectModel(selectedModelName);
 		mainPane = new StackPane();
 
 		Platform.runLater(this::setUpStage);
