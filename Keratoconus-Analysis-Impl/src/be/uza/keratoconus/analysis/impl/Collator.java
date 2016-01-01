@@ -4,8 +4,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
@@ -139,7 +142,6 @@ public class Collator implements EventHandler {
 			}
 
 			Map<String, String[][]> datafileRecords;
-			String fileKey = getFileKey(pf);
 			String patientKey;
 			synchronized (newDatafileRecordMap) {
 				if (pf.isBifacial()) {
@@ -148,14 +150,13 @@ public class Collator implements EventHandler {
 					patientKey = pf.extractKey(firstRecord);
 					datafileRecords = getNewDatafileRecordsFor(patientKey);
 					String[][] recordPair = { firstRecord, secondRecord };
-					datafileRecords.put(fileKey, recordPair);
+					datafileRecords.put(baseName, recordPair);
 				} else {
-					int startPoint = newRecordCount - 1;
-					String[] record = newRecords.get(startPoint);
+					String[] record = newRecords.get(newRecordCount - 1);
 					patientKey = pf.extractKey(record);
 					datafileRecords = getNewDatafileRecordsFor(patientKey);
 					String[][] singleRecord = { record };
-					datafileRecords.put(fileKey, singleRecord);
+					datafileRecords.put(baseName, singleRecord);
 				}
 				if (isComplete(datafileRecords)) {
 					collateRecords(patientKey, datafileRecords);
@@ -183,14 +184,23 @@ public class Collator implements EventHandler {
 		Map<String, String[][]> datafileRecords = newDatafileRecordMap
 				.get(patientKey);
 		if (datafileRecords == null) {
-			datafileRecords = new HashMap<String, String[][]>();
+			datafileRecords = new LinkedHashMap<String, String[][]>();
 			newDatafileRecordMap.put(patientKey, datafileRecords);
 		}
 		return datafileRecords;
 	}
 
 	private boolean isComplete(Map<String, String[][]> datafileRecords) {
-		return datafileRecords.keySet().containsAll(allFileKeys);
+		Set<String> datafileRecordKeys = new HashSet<>(datafileRecords.keySet());
+		for (String k : allFileKeys) {
+			if (!datafileRecordKeys.remove(k) && !datafileRecordKeys.remove(k + "-LOAD")) {
+				return false;
+			};
+		}
+		if (datafileRecordKeys.size() > 0) {
+			logService.log(LogService.LOG_WARNING, "Found excess data records for file(s): " + datafileRecordKeys);
+		}
+		return true;
 	}
 
 	private void collateRecords(String patientKey,
@@ -198,16 +208,10 @@ public class Collator implements EventHandler {
 			throws FileNotFoundException {
 		PatientExam examRecord = patientExamService
 				.createPatientExamRecord(patientKey);
-		for (String fileKey : allFileKeys) {
-			final String[][] records = datafileRecords.get(fileKey);
-			PentacamFile pf;
-			try {
-				pf = pentacamFilesService.getFileByBaseName(fileKey
-						+ FILENAME_SUFFIX_LOAD);
-			} catch (FileNotFoundException e) {
-				pf = pentacamFilesService.getFileByBaseName(fileKey
-						+ FILENAME_SUFFIX_LOAD);
-			}
+		for (String fk : allFileKeys) {
+			final String baseName = datafileRecords.containsKey(fk) ? fk : fk + FILENAME_SUFFIX_LOAD;
+			final String[][] records = datafileRecords.get(baseName);
+			PentacamFile pf = pentacamFilesService.getFileByBaseName(baseName);
 			if (pf.isBifacial()) {
 				examRecord.addData(pf.getBaseName(), pf.getAllFields(),
 						pf.getCommonFields(), pf.getUsedFields(), records[0],
@@ -231,7 +235,7 @@ public class Collator implements EventHandler {
 		} catch (Exception e) {
 			logService
 					.log(LogService.LOG_WARNING,
-							"An exception was thrown while analysing the patient exam record",
+							"An exception was thrown while analysing the data - no result will be shown",
 							e);
 		}
 	}

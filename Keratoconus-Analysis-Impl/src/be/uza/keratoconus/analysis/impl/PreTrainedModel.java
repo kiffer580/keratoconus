@@ -9,7 +9,6 @@ import java.util.Map;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
 
-import weka.classifiers.functions.SMO;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.CSVLoader;
@@ -60,18 +59,31 @@ private static final String SEMICOLON = ";";
 		String headerLine = "";
 		String dataLine = "";
 		int nColumns = 0;
-		for (Map.Entry<String, String> entry : examData.entrySet()) {
-			String attributeName = entry.getKey();
-			String attributeValue = entry.getValue();
-			if (!Arrays.asList(classificationModelService.getCommonFields())
-					.contains(attributeName) && !"Surface".equals(attributeName)) {
-				headerLine += attributeName + SEMICOLON;
-				dataLine += attributeValue + SEMICOLON;
+		for (String fieldName: classificationModelService.getUsedFields()) {
+			if (examData.containsKey(fieldName)) {
+				headerLine += fieldName + SEMICOLON;
+				final String fieldValue = examData.get(fieldName);
+				// TODO fatal error if fieldValue is null?
+				dataLine += fieldValue + SEMICOLON;
+				++nColumns;
+			}
+			else if (examData.containsKey(fieldName + " FRONT")) {
+				headerLine += fieldName + " FRONT" + SEMICOLON;
+				final String frontFieldValue = examData.get(fieldName + " FRONT");
+				// TODO fatal error if fieldValue is null?
+				dataLine += frontFieldValue + SEMICOLON;
+				++nColumns;
+				headerLine += fieldName + " BACK" + SEMICOLON;
+				final String backFieldValue = examData.get(fieldName + " BACK");
+				// TODO fatal error if fieldValue is null?
+				dataLine += backFieldValue + SEMICOLON;
 				++nColumns;
 			}
 		}
+
 		String csv = headerLine + "Class\n"
 				+ dataLine + "?\n";
+		System.out.println(csv);
 		CSVLoader csvLoader = new CSVLoader();
 		csvLoader.setFieldSeparator(SEMICOLON);
 		try {

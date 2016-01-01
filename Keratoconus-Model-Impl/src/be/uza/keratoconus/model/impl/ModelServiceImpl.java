@@ -1,6 +1,7 @@
 package be.uza.keratoconus.model.impl;
 
-import java.io.InputStream;	
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -26,6 +27,7 @@ public class ModelServiceImpl implements ModelService {
 	private String[] fileBaseNames;
 	private String[] keyFields;
 	private String[] commonFields;
+	private String[] usedFields;
 	Map<String, String> separators = new HashMap<>();
 	Map<String, String> fields = new HashMap<>();
 	private LogService logService;
@@ -36,22 +38,46 @@ public class ModelServiceImpl implements ModelService {
 	protected void setLogService(LogService ls) {
 		logService = ls;
 	}
-	
+
 	@Activate
 	protected void activate(Map<String, String> props) throws Exception {
-		System.out.println("ModelService: activated with properties " + props);
 		modelName = props.get(MODEL_NAME);
-		final InputStream stream = getClass().getResourceAsStream(CONFIG_PATH_PREFIX + modelName + CONFIG_PATH_SUFFIX); Properties
-		config = new Properties(); 
-		config.load(stream); 
+		Properties config = readConfiguration();
 		fileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
 		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
-		commonFields = ((String) config.get("pentacam.fields.common")).split(COMMA); 
-		for (String fbn : fileBaseNames) { 
-			separators.put(fbn, (String) config.get(fbn + ".field.separator")); 
-			fields.put(fbn,(String) config.get(fbn + ".fields")); 
-			} 
-		classifier = (SMO) weka.core.SerializationHelper.read(getClass().getResourceAsStream(MODEL_PATH_PREFIX + modelName + MODEL_PATH_SUFFIX)); 
+		commonFields = ((String) config.get("pentacam.fields.common"))
+				.split(COMMA);
+		usedFields = ((String) config.get("pentacam.fields.used")).split(COMMA);
+		for (String fbn : fileBaseNames) {
+			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
+			fields.put(fbn, (String) config.get(fbn + ".fields"));
+		}
+		classifier = (SMO) weka.core.SerializationHelper.read(getClass()
+				.getResourceAsStream(
+						MODEL_PATH_PREFIX + modelName + MODEL_PATH_SUFFIX));
+	}
+
+	private Properties readConfiguration() throws IOException {
+		final InputStream stream = getClass().getResourceAsStream(
+				CONFIG_PATH_PREFIX + modelName + CONFIG_PATH_SUFFIX);
+		Properties config = new Properties();
+		config.load(stream);
+		String formatVersion = (String) config.get("config.format.version");
+		if (formatVersion == null) {
+			logService.log(LogService.LOG_WARNING, "No configuration file version found, defaulting to 1.1");
+			formatVersion = "1.1";
+		} else {
+			switch (formatVersion) {
+			case "1.1":
+				logService.log(LogService.LOG_INFO, "Configuration file version is: "
+						+ formatVersion);
+				break;
+			default:
+				logService.log(LogService.LOG_ERROR, "Unknown configuration file version: "
+						+ formatVersion + ", known versions are: 1.1");
+			}
+		}
+		return config;
 	}
 
 	@Override
@@ -62,6 +88,11 @@ public class ModelServiceImpl implements ModelService {
 	@Override
 	public String[] getKeyFields() {
 		return keyFields;
+	}
+
+	@Override
+	public String[] getUsedFields() {
+		return usedFields;
 	}
 
 	@Override

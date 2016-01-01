@@ -30,6 +30,13 @@ public interface ModelService {
 	String[] getKeyFields();
 
 	/**
+	 * Names of the fields which are used by the classification model, in the
+	 * order in which it expects them (i.e. the order of fields in the training
+	 * data).
+	 */
+	String[] getUsedFields();
+
+	/**
 	 * Base names of all the files to be used. They will be used in the order
 	 * given, and the fields in the master file will be presented in the same
 	 * order (after the common fields).
