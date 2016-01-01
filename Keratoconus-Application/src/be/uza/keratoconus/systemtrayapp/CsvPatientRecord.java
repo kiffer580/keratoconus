@@ -21,6 +21,7 @@ import be.uza.keratoconus.configuration.api.ClassificationService;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.datafiles.event.AnalysisResultsEvent;
 import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
+import be.uza.keratoconus.model.api.AvailableModelsService;
 import be.uza.keratoconus.model.api.ModelService;
 
 @Component(immediate = true, configurationPolicy = ConfigurationPolicy.ignore, properties = EventConstants.EVENT_TOPIC
@@ -34,10 +35,16 @@ public class CsvPatientRecord implements EventHandler {
 	private ModelService modelService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private ClassificationService classificationService;
+	private AvailableModelsService availableModelsService;
 
 	@Reference
 	protected void setLogService(LogService ls) {
 		logService = ls;
+	}
+
+	@Reference
+	protected void setAvailableModelsService(AvailableModelsService ams) {
+		this.availableModelsService = ams;
 	}
 
 	@Reference
@@ -101,6 +108,7 @@ public class CsvPatientRecord implements EventHandler {
 						+ ");");
 			}
 		}
+		writer.print("Model used;");
 		writer.println();
 	}
 
@@ -121,6 +129,7 @@ public class CsvPatientRecord implements EventHandler {
 				}
 			}
 		}
+		writer.println(availableModelsService.getSelectedModelName());
 		writer.println();
 	}
 
