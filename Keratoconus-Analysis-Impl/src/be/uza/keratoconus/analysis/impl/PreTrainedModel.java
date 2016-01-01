@@ -83,7 +83,6 @@ private static final String SEMICOLON = ";";
 
 		String csv = headerLine + "Class\n"
 				+ dataLine + "?\n";
-		System.out.println(csv);
 		CSVLoader csvLoader = new CSVLoader();
 		csvLoader.setFieldSeparator(SEMICOLON);
 		try {
