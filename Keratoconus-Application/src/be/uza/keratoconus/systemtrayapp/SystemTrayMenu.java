@@ -242,6 +242,13 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		writeConfig(prefs);
 	}
 
+	@Override
+	public void configureSelectedModelName(String modelName) {
+		logInfo("Setting selected model name to " + modelName);
+		prefs.selectedModelName = modelName;
+		writeConfig(prefs);
+	}
+	
 	private UserPrefsDAO readConfig() {
 		GsonBuilder builder = new GsonBuilder();
 		builder.enableComplexMapKeySerialization();
@@ -359,22 +366,6 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		return prefs.patientRecordDirectory;
 	}
 
-//	@Override
-//	public void showPatientRecordDirectoryDialogue() {
-//		DirectoryChooser directoryChooser = new DirectoryChooser();
-//		directoryChooser.setTitle(pentacamConfigurationService
-//				.getApplicationTitle()
-//				+ " - choose directory where patient records will be stored");
-//		directoryChooser.setInitialDirectory(FileSystems.getDefault()
-//				.getPath(prefs.patientRecordDirectory).toFile());
-//		Platform.runLater(() -> {
-//			File chosen = directoryChooser.showDialog(null);
-//			if (chosen != null) {
-//				configurePatientRecordDirectory(chosen.getAbsolutePath());
-//			}
-//		});
-//	}
-
 	@Override
 	public void setDefaultWindowStageStyle(String wss) {
 		try {
@@ -426,6 +417,11 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	}
 
 	@Override
+	public String getSelectedModelName() {
+		return prefs.selectedModelName;
+	}
+	
+	@Override
 	public String getIconPath(String variant) {
 		String path = prefs.baseIconPath == null ? defaultBaseIconPath
 				: prefs.baseIconPath;
@@ -451,11 +447,6 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	private void logException(Exception e, String message) {
 		logService.log(ownComponentContext.getServiceReference(),
 				LogService.LOG_WARNING, message, e);
-	}
-
-	@Override
-	public String getSelectedModelName() {
-		return prefs.selectedModelName;
 	}
 
 }

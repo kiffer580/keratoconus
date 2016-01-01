@@ -11,13 +11,23 @@ import javafx.stage.StageStyle;
 import org.w3c.dom.Document;
 
 import aQute.bnd.annotation.component.Component;
+import aQute.bnd.annotation.component.Reference;
+import be.uza.keratoconus.model.api.AvailableModelsService;
+import be.uza.keratoconus.model.api.ModelService;
 import be.uza.keratoconus.systemtrayapp.api.HtmlViewerService;
+import be.uza.keratoconus.userprefs.api.UserPreferences;
 
 @Component
 public class HtmlViewer implements HtmlViewerService {
 
 	private Stage theStage;
 	private WebView webView;
+	private AvailableModelsService availableModelsService;
+	
+	@Reference
+	protected void setAvailableModelsService(AvailableModelsService ams) {
+		availableModelsService = ams;
+	}
 
 	@Override
 	public void showPage(String path, String title) {
@@ -64,6 +74,9 @@ public class HtmlViewer implements HtmlViewerService {
 			Platform.runLater(() -> {
 				webView.setPrefHeight(height + 10);
 				webView.setPrefWidth(width);
+				String selectedModelName = availableModelsService.getSelectedModelName();
+				webView.getEngine().executeScript("document.getElementById('modelname').textContent='" + selectedModelName + "'");
+				webView.getEngine().executeScript("document.getElementById('modeldescription').textContent='" + availableModelsService.getModeDescription(selectedModelName) + "'");
 				theStage.sizeToScene();
 			});
 		} catch (Exception e) {

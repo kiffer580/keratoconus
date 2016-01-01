@@ -66,8 +66,6 @@ import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
 import be.uza.keratoconus.datafiles.event.FileCreatedEvent;
 import be.uza.keratoconus.datafiles.event.FileEvent;
 import be.uza.keratoconus.datafiles.event.FileEventConstants;
-import be.uza.keratoconus.model.api.AvailableModelsService;
-import be.uza.keratoconus.model.api.ModelService;
 import be.uza.keratoconus.userprefs.api.UserPreferences;
 import be.uza.keratoconus.userprefs.api.UserPreferences.ChartType;
 
@@ -209,8 +207,6 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 
 	private LogService logService;
 
-	private AvailableModelsService availableModelsService;
-
 	@Reference
 	protected void setPentacamConfigurationService(
 			PentacamConfigurationService pcs) {
@@ -232,11 +228,6 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 		this.logService = ls;
 	}
 
-	@Reference
-	protected void setAvailableModelsService(AvailableModelsService ams) {
-		this.availableModelsService = ams;
-	}
-
 	@Activate
 	protected void activate(Map<String, Object> params) throws Exception {
 		nodeConfig = Configurable.createConfigurable(Config.class, params);
@@ -249,17 +240,6 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 				.detail_chart_type());
 		headlineThreshold = pentacamConfigurationService.getHeadlineThreshold();
 		parseParameters(params);
-		List<String> availableModelNames = availableModelsService.getAvailableModelNames();
-		System.out.println("MainPopup: available model names: " + availableModelNames);
-		String selectedModelName = userPreferences.getSelectedModelName();
-		if (selectedModelName == null) {
-			selectedModelName = availableModelNames.get(0);
-			logService.log(LogService.LOG_INFO, "No model selected in user preferences, defaulting to: " + selectedModelName);
-		}
-		else {
-			logService.log(LogService.LOG_INFO, "Model selected in user preferences: " + selectedModelName);
-		}
-		availableModelsService.selectModel(selectedModelName);
 		mainPane = new StackPane();
 
 		Platform.runLater(this::setUpStage);

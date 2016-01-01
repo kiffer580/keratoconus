@@ -124,6 +124,7 @@ public class AvailableModelServicesImpl implements AvailableModelsService {
 					"Creating configuration for " + factoryPid
 							+ " : " + dict);
 			c.update(dict);
+			selectedModelName = modelName;
 		} catch (IOException e) {
 			logService.log(LogService.LOG_ERROR,
 					"Failed to launch ModelService configuration for "

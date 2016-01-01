@@ -1,8 +1,5 @@
 package be.uza.keratoconus.model.api;
 
-import java.io.IOException;
-import java.util.List;
-
 import aQute.bnd.annotation.ProviderType;
 
 /**

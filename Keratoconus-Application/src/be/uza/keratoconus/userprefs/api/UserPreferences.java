@@ -197,6 +197,16 @@ public interface UserPreferences {
 	 */
 	boolean isPatientRecordEnabled();
 
-	String getSelectedModelName();
+	/**
+	 * Configure the name of the classification model which is to be used if more than one is available.
+	 * @param modelName the name of the model
+	 */
+	void configureSelectedModelName(String modelName);
 
+	/**
+	 * Get the name of the classification model which is to be used if more than one is available.
+	 * @return the name of the model
+	 */
+	String getSelectedModelName();
+	
 }
