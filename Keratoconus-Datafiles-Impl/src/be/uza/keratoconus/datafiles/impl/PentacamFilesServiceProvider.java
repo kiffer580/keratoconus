@@ -196,8 +196,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	@Override
-	public PentacamFile getFileByBaseName(String baseName)
-			throws FileNotFoundException {
+	public PentacamFile getFileByBaseName(String baseName) {
 		return files.get(baseName);
 	}
 

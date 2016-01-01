@@ -25,8 +25,6 @@ public interface PentacamFilesService {
 	 * Get a file by its base name, i.e. the name without the directory path and the .CSV extension.
 	 * @param baseName
 	 * @return
-	 * @throws FileNotFoundException
 	 */
-	PentacamFile getFileByBaseName(String baseName)
-			throws FileNotFoundException;
+	PentacamFile getFileByBaseName(String baseName);
 }
