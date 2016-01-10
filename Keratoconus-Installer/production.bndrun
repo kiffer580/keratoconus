@@ -33,7 +33,7 @@
 	Keratoconus-Logging;version='[1.0.0,1.0.1)',\
 	Keratoconus-Model-Edegem;version='[0.0.0,0.0.1)',\
 	Keratoconus-Model-Impl;version='[0.0.0,0.0.1)',\
-	Keratoconus-Model-Paris;version='[1.0.0,1.0.1)',\
+	Keratoconus-Model-Paris;version='[0.0.0,0.0.1)',\
 	Weka-Wrapper;version='[3.7.12,3.7.13)',\
 	biz.aQute.bnd.annotation;version='[3.0.0,3.0.1)',\
 	biz.aQute.bndlib;version='[3.0.0,3.0.1)',\
