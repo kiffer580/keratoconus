@@ -64,6 +64,8 @@ public class GraphicalPatientRecord implements EventHandler {
 
 	private static final String STATUS = "Status";
 
+	private static final String MODEL = "Model";
+
 	private static final String[] ERROR_TEXT = { "", "Warning", "Error" };
 
 	@OCD
@@ -202,7 +204,7 @@ public class GraphicalPatientRecord implements EventHandler {
 		final Stage gprStage = new Stage();
 		gprStage.initStyle(StageStyle.UTILITY);
 		gprStage.setTitle("Keratoconus Graphical Customer Record");
-		// Set a listener on the webEngine which will run one the document has
+		// Set a listener on the webEngine which will run once the document has
 		// been loaded
 		webEngine
 				.getLoadWorker()
@@ -239,15 +241,24 @@ public class GraphicalPatientRecord implements EventHandler {
 			ncols = Math.max(ncols, rh.length);
 			int col = 0;
 			for (String h : rh) {
-				String value = examData.get(h);
+				String value;
+				if (MODEL.equals(h)) {
+					value = guiConfig.getSelectedModelName().trim();
+				} else if (INDICATION.equals(h)) {
+					value = classificationService.getHeadline(headlineKey);
+				} else {
+					value = examData.get(h);
+				}
+
 				if (STATUS.equals(h) && !suppressErrorDescription) {
 					thead += wrap(ERROR_TEXT[errorLevel], "td") + "\n";
 					tbody += wrap(value.trim(), "td") + "\n";
+				} else if (MODEL.equals(h)) {
+					thead += wrap("Model Used", "td") + "\n";
+					tbody += wrap(value.trim(), "td") + "\n";
 				} else if (INDICATION.equals(h)) {
 					thead += wrap(h, "td") + "\n";
-					tbody += wrap(
-							classificationService.getHeadline(headlineKey),
-							"td") + "\n";
+					tbody += wrap(value.trim(), "td") + "\n";
 				} else if (PROBABILITIES.equals(h)) {
 					thead += wrap(h, "td") + "\n";
 					if (suppressDistribution) {
@@ -258,14 +269,7 @@ public class GraphicalPatientRecord implements EventHandler {
 					}
 				} else if (value != null && !value.trim().isEmpty()) {
 					thead += wrap(h, "td") + "\n";
-					if (INDICATION.equals(h)) {
-						tbody += wrap(
-								classificationService.getHeadline(headlineKey),
-								"td") + "\n";
-					} else if (PROBABILITIES.equals(h)) {
-					} else {
-						tbody += wrap(value.trim(), "td") + "\n";
-					}
+					tbody += wrap(value.trim(), "td") + "\n";
 				}
 				++col;
 			}
