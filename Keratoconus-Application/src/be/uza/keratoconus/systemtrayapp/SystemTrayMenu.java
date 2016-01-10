@@ -26,6 +26,7 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.event.EventAdmin;
 import org.osgi.service.log.LogService;
 
 import aQute.bnd.annotation.component.Activate;
@@ -46,6 +47,8 @@ import com.google.gson.GsonBuilder;
 @Component(provide = UserPreferences.class, configurationPolicy = ConfigurationPolicy.ignore)
 public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		UserPreferences {
+
+	private static final String SELECTED_MODEL_NAME = "selectedModelName";
 
 	private static final String PREFS_FILE_NAME = "preferences.json";
 
@@ -69,6 +72,7 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 
 	private UserPrefsDAO prefs;
 	private LogService logService;
+	private EventAdmin eventAdmin;
 	private HtmlViewerService aboutService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private UserPreferencesMenu prefsMenu;
@@ -96,6 +100,11 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	@Reference
 	protected void setLogService(LogService s) {
 		logService = s;
+	}
+
+	@Reference
+	protected void setEventAdmin(EventAdmin s) {
+		eventAdmin = s;
 	}
 
 	@Reference
@@ -247,6 +256,9 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		logInfo("Setting selected model name to " + modelName);
 		prefs.selectedModelName = modelName;
 		writeConfig(prefs);
+		Map<String, String> changed = new HashMap<>();
+		changed.put(SELECTED_MODEL_NAME, modelName);
+		eventAdmin.postEvent(new UserPreferencesChangedEvent(SELECTED_MODEL_NAME, changed));
 	}
 	
 	private UserPrefsDAO readConfig() {
