@@ -8,17 +8,22 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.w3c.dom.Document;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
+import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
 import be.uza.keratoconus.model.api.AvailableModelsService;
 import be.uza.keratoconus.model.api.ModelService;
 import be.uza.keratoconus.systemtrayapp.api.HtmlViewerService;
 import be.uza.keratoconus.userprefs.api.UserPreferences;
 
-@Component
-public class HtmlViewer implements HtmlViewerService {
+@Component(properties = EventConstants.EVENT_TOPIC
+		+ "=" + HtmlViewerService.SHOWPAGE_TOPIC)
+public class HtmlViewer implements HtmlViewerService, EventHandler {
 
 	private Stage theStage;
 	private WebView webView;
@@ -29,6 +34,12 @@ public class HtmlViewer implements HtmlViewerService {
 		availableModelsService = ams;
 	}
 
+	@Override
+	public void handleEvent(Event event) {
+		Platform.runLater(() -> showPage((String) event.getProperty(HtmlViewerService.SHOWPAGE_PATH),
+				(String) event.getProperty(HtmlViewerService.SHOWPAGE_TITLE)));
+	}
+	
 	@Override
 	public void showPage(String path, String title) {
 		theStage = new Stage();

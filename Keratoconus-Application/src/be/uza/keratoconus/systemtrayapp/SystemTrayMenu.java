@@ -37,6 +37,7 @@ import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.configuration.api.Classification.Category;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.systemtrayapp.api.HtmlViewerService;
+import be.uza.keratoconus.systemtrayapp.api.ShowPageEvent;
 import be.uza.keratoconus.userprefs.api.PreferencesWindow;
 import be.uza.keratoconus.userprefs.api.UserPreferences;
 import be.uza.keratoconus.userprefs.impl.UserPreferencesMenu;
@@ -173,24 +174,28 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		prefsMenu = null;
 	}
 
+	@SuppressWarnings("serial")
 	private void setUpMenu() {
 		addActionListener(this);
 		final MenuItem menuItemAbout = new MenuItem("About " + applicationTitle);
 		add(menuItemAbout);
-		menuItemAbout.addActionListener(event -> Platform
-				.runLater(() -> aboutService.showPage("/html/about.html", "About " + applicationTitle)));
+		menuItemAbout.addActionListener(event -> eventAdmin
+				.postEvent(new ShowPageEvent("/html/about.html", "About "
+						+ applicationTitle)));
 		final MenuItem menuItemManual = new MenuItem("User Manual");
 		add(menuItemManual);
-		menuItemManual.addActionListener(event -> Platform
-				.runLater(() -> aboutService.showPage("/html/manual1.html", applicationTitle + " - User Manual")));
+		menuItemManual.addActionListener(event -> eventAdmin
+				.postEvent(new ShowPageEvent("/html/manual1.html",
+						applicationTitle + " - User Manual")));
 		addSeparator();
 
 		add(prefsMenu);
 		addSeparator();
 		
-		final MenuItem menuItemRestart = new MenuItem("Restart "
-				+ applicationTitle);
-		add(menuItemRestart);
+// Suppressed this for the time being at least, because it doesn't work reliably
+//		final MenuItem menuItemRestart = new MenuItem("Restart "
+//				+ applicationTitle);
+//		add(menuItemRestart);
 		final MenuItem menuItemExit = new MenuItem("Exit " + applicationTitle);
 		add(menuItemExit);
 	}
@@ -352,16 +357,17 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		String command = e.getActionCommand();
 		if (command != null) {
 			logInfo("Menu item '" + command + "' selected");
-			if (command.startsWith("Restart ")) {
-				logInfo("Restarting application");
-				try {
-					FrameworkUtil.getBundle(
-							pentacamConfigurationService.getClass()).update();
-				} catch (BundleException e1) {
-					logException(e1,
-							"Exception thrown when restarting framework");
-				}
-			}
+// Suppressed this for the time being at least, because it doesn't work reliably
+//			if (command.startsWith("Restart ")) {
+//				logInfo("Restarting application");
+//				try {
+//					FrameworkUtil.getBundle(
+//							pentacamConfigurationService.getClass()).update();
+//				} catch (BundleException e1) {
+//					logException(e1,
+//							"Exception thrown when restarting framework");
+//				}
+//			}
 			if (command.startsWith("Exit ")) {
 				logInfo("Terminating application");
 				try {
