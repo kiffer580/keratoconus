@@ -5,6 +5,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
@@ -91,9 +93,16 @@ public class PopupLogListener implements LogListener {
 		if (pentacamConfigurationService != null) {
 			alert.setTitle(pentacamConfigurationService.getApplicationTitle());
 		}
-		alert.setHeaderText(entry.getServiceReference() == null ? alertType
-				.name() : alertType + " from "
-				+ entry.getServiceReference().getProperty("objectClass"));
+		
+		String headerText = alertType.name();
+		if (entry.getServiceReference() != null) {
+			Object objectClass = entry.getServiceReference().getProperty(
+					"objectClass");
+			if (objectClass != null && (!objectClass.getClass().isArray())) {
+				headerText += " from " + objectClass;
+			}
+		}
+		alert.setHeaderText(headerText);
 		return alert;
 	}
 
