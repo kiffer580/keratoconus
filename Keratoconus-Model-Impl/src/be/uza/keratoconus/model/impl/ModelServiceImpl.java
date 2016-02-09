@@ -2,13 +2,23 @@ package be.uza.keratoconus.model.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.junit.experimental.categories.Categories.CategoryFilter;
 import org.osgi.service.log.LogService;
 
 import weka.classifiers.functions.SMO;
+import weka.classifiers.functions.SMO.BinarySMO;
+import weka.core.Attribute;
+import weka.core.Instances;
+import weka.core.NominalAttributeInfo;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.ConfigurationPolicy;
@@ -33,6 +43,10 @@ public class ModelServiceImpl implements ModelService {
 	private LogService logService;
 	private String modelName;
 	private SMO classifier;
+	private String classAttributeName;
+	private int classAttributeIndex;
+	private List<String> classAttributeValues;
+	private List<String> attributeNames;
 
 	@Reference
 	protected void setLogService(LogService ls) {
@@ -55,6 +69,7 @@ public class ModelServiceImpl implements ModelService {
 		classifier = (SMO) weka.core.SerializationHelper.read(getClass()
 				.getResourceAsStream(
 						MODEL_PATH_PREFIX + modelName + MODEL_PATH_SUFFIX));
+		extractAttributes(classifier);
 	}
 
 	private Properties readConfiguration() throws IOException {
@@ -78,6 +93,57 @@ public class ModelServiceImpl implements ModelService {
 			}
 		}
 		return config;
+	}
+
+	/*
+	 * Extract classifier information using reflection
+	 */
+	@SuppressWarnings("unchecked")
+	private void extractAttributes(SMO classifier) {
+		try {
+			Attribute classAttribute = examineField(classifier,
+					"m_classAttribute");
+			classAttributeName = examineField(classAttribute, "m_Name");
+			Field attributeNameField = Attribute.class
+					.getDeclaredField("m_Name");
+			attributeNameField.setAccessible(true);
+			System.out.println("classAttributeName = " + classAttributeName);
+			classAttributeIndex = examineField(classAttribute, "m_Index");
+			System.out.println("classAttributeIndex = " + classAttributeIndex);
+			NominalAttributeInfo info = examineField(classAttribute,
+					"m_AttributeInfo");
+
+			classAttributeValues = examineField(info, "m_Values");
+			System.out
+					.println("classAttributeValues = " + classAttributeValues);
+			Hashtable<String, Integer> classHashtable = examineField(info,
+					"m_Hashtable");
+			System.out.println("class hashtable = " + classHashtable);
+			SMO.BinarySMO[][] classifierArray = examineField(classifier,
+					"m_classifiers");
+			Instances instances = examineField(classifierArray[0][1], "m_data");
+			List<Attribute> attributeList = examineField(instances,
+					"m_Attributes");
+			attributeNames = new ArrayList<>();
+			for (Attribute a : attributeList) {
+				attributeNames.add((String) attributeNameField.get(a));
+			}
+			System.out.println("attributeNames = " + attributeNames);
+		} catch (NoSuchFieldException | SecurityException
+				| IllegalArgumentException | IllegalAccessException e) {
+			logService.log(LogService.LOG_INFO,
+					"Exception thrown while inspecting serialized SMO object",
+					e);
+		}
+	}
+
+	private <T> T examineField(Object obj, String fieldName)
+			throws NoSuchFieldException, IllegalAccessException {
+		Field classAttributeField = obj.getClass().getDeclaredField(fieldName);
+		classAttributeField.setAccessible(true);
+		@SuppressWarnings("unchecked")
+		T classAttribute = (T) classAttributeField.get(obj);
+		return classAttribute;
 	}
 
 	@Override
@@ -113,6 +179,25 @@ public class ModelServiceImpl implements ModelService {
 	@Override
 	public SMO getClassifier() throws Exception {
 		return classifier;
+	}
 
+	@Override
+	public String getClassAttributeName() {
+		return classAttributeName;
+	}
+
+	@Override
+	public int getClassAttributeIndex() {
+		return classAttributeIndex;
+	}
+
+	@Override
+	public List<String> getClassAttributeValues() {
+		return classAttributeValues;
+	}
+
+	@Override
+	public List<String> getAttributeNames() {
+		return attributeNames;
 	}
 }

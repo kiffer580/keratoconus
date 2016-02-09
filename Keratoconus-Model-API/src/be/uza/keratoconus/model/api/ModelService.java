@@ -1,5 +1,7 @@
 package be.uza.keratoconus.model.api;
 
+import java.util.List;
+
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -67,4 +69,58 @@ public interface ModelService {
 	 * @throws Exception
 	 */
 	weka.classifiers.functions.SMO getClassifier() throws Exception;
+
+	/**
+	 * Get the name of the attribute which determines the classification of a
+	 * patient examination. <br/>
+	 * <b>N.B.</b> This information is obtained by using reflection to examine
+	 * private fields of the serialized model. If for any reason this process
+	 * fails then <code>null</code> will be returned, and the caller must be
+	 * prepared to deal with this situation.
+	 * 
+	 * @return The name of the classification attribute, or <code>null</code> if
+	 *         the introspection fails.
+	 */
+	String getClassAttributeName();
+
+	/**
+	 * Get the possible values of the attribute which determines the
+	 * classification of a patient examination. <br/>
+	 * <b>N.B.</b> This information is obtained by using reflection to examine
+	 * private fields of the serialized model. If for any reason this process
+	 * fails then <code>null</code> will be returned, and the caller must be
+	 * prepared to deal with this situation.
+	 * 
+	 * @return A list of the possible values of the classification attribute, or
+	 *         <code>null</code> if the introspection fails.
+	 */
+	List<String> getClassAttributeValues();
+
+	/**
+	 * Get the index of the attribute which determines the classification of a
+	 * patient examination within the list returned by
+	 * {@link #getAttributeNames()}. <br/>
+	 * <b>N.B.</b> This information is obtained by using reflection to examine
+	 * private fields of the serialized model. If for any reason this process
+	 * fails then <code>null</code> will be returned, and the caller must be
+	 * prepared to deal with this situation.
+	 * 
+	 * @return The index of the classification attribute, or <code>null</code>
+	 *         if the introspection fails.
+	 */
+	int getClassAttributeIndex();
+
+	/**
+	 * Get the names of all the attributes which are used in the classification
+	 * process, including the classification attribute itself (needed for
+	 * verification purposes). <br/>
+	 * <b>N.B.</b> This information is obtained by using reflection to examine
+	 * private fields of the serialized model. If for any reason this process
+	 * fails then <code>null</code> will be returned, and the caller must be
+	 * prepared to deal with this situation.
+	 * 
+	 * @return A list containing the names of all the attributes, or
+	 *         <code>null</code> if the introspection fails.
+	 */
+	List<String> getAttributeNames();
 }
