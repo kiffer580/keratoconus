@@ -2,7 +2,6 @@ package be.uza.keratoconus.analysis.impl;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
