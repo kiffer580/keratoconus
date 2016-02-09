@@ -36,8 +36,13 @@ public class PatientExamImpl implements PatientExam {
 			String[] record) {
 		handleCommonFields(allFields, commonFields, record);
 		for (final PentacamField field : usedFields) {
+			// TODO make the mapping field -> index in record once, at startup
 			String name = field.getName();
 			int i = allFields.indexOf(field);
+			if (i < 0) {
+				fieldNotFoundError(baseName, name);
+				return;
+			}
 			String value = cleanUp(record[i]);
 			String existing = examData.put(name, value);
 			if (existing != null) {
@@ -60,8 +65,13 @@ public class PatientExamImpl implements PatientExam {
 			String[] frontRecord, String[] backRecord) {
 		handleCommonFields(allFields, commonFields, frontRecord);
 		for (final PentacamField field : usedFields) {
+			// TODO make the mapping field -> index in record once, at startup
 			String name = field.getName();
 			int i = allFields.indexOf(field);
+			if (i < 0) {
+				fieldNotFoundError(baseName, name);
+				return;
+			}
 			String frontValue = cleanUp(frontRecord[i]);
 			String backValue = cleanUp(backRecord[i]);
 			String existing;
@@ -84,7 +94,11 @@ public class PatientExamImpl implements PatientExam {
 	}
 
 	private void duplicateFieldWarning(String baseName, String name) {
-		patientExamServiceImpl.warn("Field {0} of {1} has the same name as an existing field", baseName, name);
+		patientExamServiceImpl.warn("Field {1} of {0} has the same name as an existing field", baseName, name);
+	}
+
+	private void fieldNotFoundError(String baseName, String name) {
+		patientExamServiceImpl.error("Field {1} of {0} was not found in the file headers", baseName, name);
 	}
 
 	private String cleanUp(final String raw) {

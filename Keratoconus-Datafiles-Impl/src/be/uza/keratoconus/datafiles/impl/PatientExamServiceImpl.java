@@ -51,4 +51,9 @@ public class PatientExamServiceImpl implements PatientExamService {
 		logService.log(ownComponentContext.getServiceReference(), LogService.LOG_WARNING, message);
 	}
 
+	public void error(String format, Object ... params) {
+		String message = MessageFormat.format(format, params);
+		logService.log(ownComponentContext.getServiceReference(), LogService.LOG_ERROR, message);
+	}
+
 }
