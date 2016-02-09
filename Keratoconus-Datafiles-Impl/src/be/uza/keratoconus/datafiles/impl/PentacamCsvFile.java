@@ -1,19 +1,23 @@
 package be.uza.keratoconus.datafiles.impl;
 
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
@@ -146,7 +150,7 @@ public class PentacamCsvFile implements PentacamFile {
 					// in failure cases we return the null character
 					return 0;
 				}
-				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_WARNING, "Exception thrown while trying to guess field separator in file " + fileName + ", retrying", e);
+				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_INFO, "Exception thrown while trying to guess field separator in file " + fileName + ", retrying", e);
 				takeANap();
 			}
 		}
@@ -197,8 +201,22 @@ public class PentacamCsvFile implements PentacamFile {
 			}
 
 			if (!fieldMap.isEmpty()) {
-				final Collection<PentacamFieldImpl> fields = fieldMap.values();
-				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_WARNING, "Fields " + fields + " not found in file " + fileName);
+				final Set<String> fields = new HashSet<>();
+				for (PentacamFieldImpl pfi : fieldMap.values()) {
+					fields.add(pfi.getName());
+				}
+				String homeDirectory = System.getProperty("user.dir").replace('\\', '/');
+				URI manual6uri = new URI("file", "",
+						"/" + homeDirectory + "/html/manual6.html", null, null);
+				if (Desktop.isDesktopSupported()) {
+					Desktop.getDesktop().browse(manual6uri);
+				}
+				else {
+					Runtime.getRuntime().exec( "cmd /k start " + manual6uri.toASCIIString());
+				}
+				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_ERROR, "Fields " + fields + " not found in file " + fileName + ".\n" +
+						"Probably your Pentacam software is not correctly configured - see chapter 6 \"Pentacm configuration\" of the User Manual for more information.");
+//				eventAdmin.postEvent(new ShowPageEvent("/html/manual6.html", pentacamConfigurationService.getApplicationTitle() + " - User Manual"));
 			}
 
 			keyIndices = new ArrayList<Integer>();
