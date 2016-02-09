@@ -1,0 +1,37 @@
+<html>
+  <head><title>Keratoconus Assistant - Errors and logging</title>
+    <link rel="stylesheet" type="text/css" href="../css/manual.css">
+  </head>
+  <body>
+    <div class="manual-container">
+    <select style="float:right;padding:0.25em" onChange="window.location.href=this.value">
+    	<option>Go to page &hellip;</option>
+    	<option value="manual1.html">1. General principles</option>
+    	<option value="manual2.html">2. Dubious cases</option>
+    	<option value="manual3.html">3. Presentation of results</option>
+    	<option value="manual4.html">4. Patient record files</option>
+    	<option value="manual5.html">5. User preferences</option>
+    	<option value="manual6.html">6. Pentacam configuration</option>
+    	<option value="manual7.html">7. Errors and logging</option>
+	</select>
+     <h2>Errors and logging</h2>
+     <p>If the application encounters an unexpected situation, it will pop up a &ldquo;warning&rdquo; or an &ldquo;error&rdquo; dialogue;
+     a &ldquo;warning&rdquo; indicates that the application can still function, while an &ldquo;error&rdquo; indicates that
+     the application is unable to proceed further and will terminate.  In both cases the dialogue text refers to a log file
+     where more information can be found; if you submit an error report then you should include the most recent log file(s).
+     
+     <p>The log files are stored on the hard disc in directory
+     <tt>%LOCALAPPDATA%\Keratoconus\logging</tt>, where <tt>%LOCALAPPDATA%</tt> refers to the &ldquo;local AppData&rdquo; directory.
+     The precise location of this directory depends on the version of windows, for example on Windows 8 it is
+     <tt>C:\Users\</tt><i>username</i><tt>\AppData\Local</tt>.
+     If you do not know how to find this directory then ask a wizard to help you.
+     
+     <p>A new log file is started each time that the application is launched, and the name incorporates an ISO 8601 timestamp &ndash;
+     thus for example a file called <tt>keratoconus-log-20150724T071440Z.txt</tt> will have been created on 24 July 2015 at 07:14:40 UTC.
+     If the log files are no longer required you may safely delete them at any time.
+       <div class="manual-footer">
+       <input type="button" value="previous page: Pentacam configuration" style="float:left" onClick="parent.location='manual6.html'">
+     </div>
+  </div> 
+  </body>
+</html>
