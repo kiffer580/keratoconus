@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import be.uza.keratoconus.datafiles.api.PentacamField;
+import be.uza.keratoconus.model.api.AttributeNames;
 
 public class PentacamFieldImpl implements PentacamField {
 
@@ -36,21 +37,21 @@ public class PentacamFieldImpl implements PentacamField {
 	}
 
 	private boolean extractBifaciality(List<String> cdr) {
-		if (cdr.contains(BIFACIAL)) {
+		if (cdr.contains(AttributeNames.BIFACIAL)) {
 			return true;
 		}
 		return false;
 	}
 
 	private boolean extractDiscriminator(List<String> cdr) {
-		if (cdr.contains(DISCRIMINATOR)) {
+		if (cdr.contains(AttributeNames.DISCRIMINATOR)) {
 			return true;
 		}
 		return false;
 	}
 
 	private boolean extractUsefulness(List<String> cdr) {
-		if (cdr.contains(UNUSED)) {
+		if (cdr.contains(AttributeNames.UNUSED)) {
 			return false;
 		}
 		return true;

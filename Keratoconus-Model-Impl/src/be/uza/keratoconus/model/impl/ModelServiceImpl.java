@@ -23,6 +23,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.ConfigurationPolicy;
 import aQute.bnd.annotation.component.Reference;
+import be.uza.keratoconus.model.api.AttributeNames;
 import be.uza.keratoconus.model.api.ModelService;
 
 @Component(configurationPolicy = ConfigurationPolicy.require)
@@ -135,7 +136,7 @@ public class ModelServiceImpl implements ModelService {
 				fieldAttributes = Arrays.asList(descriptor.substring(semicolon + 1, colon).split(SEMICOLON));
 			}
  			System.out.println(fieldname + " attributes = " + fieldAttributes);
-			if (!fieldAttributes.contains("discriminator")) {
+			if (!fieldAttributes.contains(AttributeNames.DISCRIMINATOR)) {
 				localUsedFields.add(fieldname);
 			}
 			String filebasename = descriptor.substring(colon + 1);
