@@ -28,11 +28,14 @@ import be.uza.keratoconus.model.api.ModelService;
 @Component(configurationPolicy = ConfigurationPolicy.require)
 public class ModelServiceImpl implements ModelService {
 
+	private static final String CONFIG_FORMAT_VERSION = "config.format.version";
 	private static final String CONFIG_PATH_PREFIX = "/config/";
 	private static final String CONFIG_PATH_SUFFIX = ".properties";
 	private static final String MODEL_PATH_PREFIX = "/model/";
 	private static final String MODEL_PATH_SUFFIX = ".model";
 	private static final String COMMA = ",";
+	private static final String COLON = ":";
+	private static final String SEMICOLON = ";";
 
 	private String[] fileBaseNames;
 	private String[] keyFields;
@@ -57,14 +60,17 @@ public class ModelServiceImpl implements ModelService {
 	protected void activate(Map<String, String> props) throws Exception {
 		modelName = props.get(MODEL_NAME);
 		Properties config = readConfiguration();
-		fileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
-		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
-		commonFields = ((String) config.get("pentacam.fields.common"))
-				.split(COMMA);
-		usedFields = ((String) config.get("pentacam.fields.used")).split(COMMA);
-		for (String fbn : fileBaseNames) {
-			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
-			fields.put(fbn, (String) config.get(fbn + ".fields"));
+		String formatVersion = extractFormatVersion(config);
+		switch (formatVersion) {
+		case "1.1":
+			extractProperties_1_1(config);
+			break;
+		case "1.2":
+			extractProperties_1_2(config);
+			break;
+		default:
+			logService.log(LogService.LOG_ERROR, "Unknown configuration file version: "
+					+ formatVersion + ", known versions are: 1.1, 1.2");
 		}
 		classifier = (SMO) weka.core.SerializationHelper.read(getClass()
 				.getResourceAsStream(
@@ -77,22 +83,83 @@ public class ModelServiceImpl implements ModelService {
 				CONFIG_PATH_PREFIX + modelName + CONFIG_PATH_SUFFIX);
 		Properties config = new Properties();
 		config.load(stream);
-		String formatVersion = (String) config.get("config.format.version");
+		return config;
+	}
+
+	private String extractFormatVersion(Properties config) {
+		String formatVersion = (String) config.get(CONFIG_FORMAT_VERSION);
 		if (formatVersion == null) {
 			logService.log(LogService.LOG_WARNING, "No configuration file version found, defaulting to 1.1");
-			formatVersion = "1.1";
-		} else {
-			switch (formatVersion) {
-			case "1.1":
-				logService.log(LogService.LOG_INFO, "Configuration file version is: "
-						+ formatVersion);
-				break;
-			default:
-				logService.log(LogService.LOG_ERROR, "Unknown configuration file version: "
-						+ formatVersion + ", known versions are: 1.1");
+			return "1.1";
+		}
+		return formatVersion;
+	}
+
+	private void extractProperties_1_1(Properties config) {
+		logService.log(LogService.LOG_INFO, "Configuration file version is 1.1");
+		fileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
+		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
+		commonFields = ((String) config.get("pentacam.fields.common"))
+				.split(COMMA);
+		usedFields = ((String) config.get("pentacam.fields.used")).split(COMMA);
+		for (String fbn : fileBaseNames) {
+			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
+			fields.put(fbn, (String) config.get(fbn + ".fields"));
+		}
+	}
+
+	private void extractProperties_1_2(Properties config) {
+		logService.log(LogService.LOG_INFO, "Configuration file version is 1.2");
+		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
+		commonFields = ((String) config.get("pentacam.fields.common"))
+				.split(COMMA);
+		String[] usedFieldDescriptors = ((String) config.get("pentacam.fields.used")).split(COMMA);
+		Map<String,String> checkFields = new HashMap<>();
+		List<String> localUsedFields = new ArrayList<>();
+		for (int i = 0; i < usedFieldDescriptors.length; ++i) {
+			String descriptor = usedFieldDescriptors[i];
+			int colon = descriptor.lastIndexOf(COLON);
+			int semicolon = descriptor.indexOf(SEMICOLON);
+			if (colon < 0) {
+				logService.log(LogService.LOG_ERROR, "Error in pentacam.fields.used property: item " + descriptor + " does not contain a colon (:).').");
+				return;
+			}
+			
+			String fieldname;
+			List<String> fieldAttributes = new ArrayList<>();
+ 			if (semicolon < 0) {
+				fieldname = descriptor.substring(0,  colon);
+			}
+			else {
+				fieldname = descriptor.substring(0,  semicolon);
+				fieldAttributes = Arrays.asList(descriptor.substring(semicolon + 1, colon).split(SEMICOLON));
+			}
+ 			System.out.println(fieldname + " attributes = " + fieldAttributes);
+			if (!fieldAttributes.contains("discriminator")) {
+				localUsedFields.add(fieldname);
+			}
+			String filebasename = descriptor.substring(colon + 1);
+			String check = checkFields.get(filebasename);
+			if (check == null) {
+				checkFields.put(filebasename, fieldname);
+			}
+			else {
+				checkFields.put(filebasename,  check + "," + fieldname);
 			}
 		}
-		return config;
+		
+		for (String fbn : checkFields.keySet()) {
+			System.out.println("checkFields[" + fbn + "] = " + checkFields.get(fbn));
+			System.out.println("     fields[" + fbn + "] = " + config.get(fbn + ".fields"));
+		}
+		
+		String[] localFileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
+		for (String fbn : localFileBaseNames) {
+			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
+			fields.put(fbn, (String) config.get(fbn + ".fields"));
+		}
+		usedFields = localUsedFields.toArray(new String[localUsedFields.size()]);
+		fileBaseNames = localFileBaseNames;
 	}
 
 	/*
