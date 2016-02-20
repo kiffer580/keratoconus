@@ -48,7 +48,7 @@ private static final String SEMICOLON = ";";
 	@Activate
 	public void activate(ComponentContext cc) throws Exception {
 		this.ownComponentContext = cc;
-		classifier = classificationModelService.getClassifier();
+		classifier = classificationModelService.getSMO();
 		classAttributeNames = classifier.classAttributeNames();
 	}
 

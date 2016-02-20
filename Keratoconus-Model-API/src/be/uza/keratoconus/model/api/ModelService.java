@@ -2,6 +2,9 @@ package be.uza.keratoconus.model.api;
 
 import java.util.List;
 
+import weka.classifiers.AbstractClassifier;
+import weka.classifiers.functions.SMO;
+import weka.classifiers.SingleClassifierEnhancer;
 import aQute.bnd.annotation.ProviderType;
 
 /**
@@ -68,7 +71,24 @@ public interface ModelService {
 	 * @return
 	 * @throws Exception
 	 */
-	weka.classifiers.functions.SMO getClassifier() throws Exception;
+	AbstractClassifier getClassifier() throws Exception;
+
+	/**
+	 * Get the SMO classifier. If {@link #getClassifier()} returns an object of
+	 * type {@link SMO} then this method will return the same result, if
+	 * {@link #getClassifier()} returns an object of type
+	 * {@link SingleClassifierEnhancer} which wraps an SMO then this method will
+	 * return the SMO. In all other cases an {@link IllegalAccessException} will
+	 * be thrown.
+	 * 
+	 * @return the SMO.
+	 * @throws Exception
+	 *             if an error occurs during introspection of the classifier
+	 *             object, or the classifier object is neither an {@link SMO}
+	 *             nor a {@link SingleClassifierEnhancer} which wraps an
+	 *             {@link SMO}.
+	 */
+	SMO getSMO() throws Exception;
 
 	/**
 	 * Get the name of the attribute which determines the classification of a
@@ -113,7 +133,9 @@ public interface ModelService {
 	/**
 	 * Get the names of all the attributes which are used in the classification
 	 * process, including the classification attribute itself (needed for
-	 * verification purposes). <br/>
+	 * verification purposes). Note that the names are returned exactly as they
+	 * are stored in the model; you may need to apply {@link stripJunk()} to
+	 * obtain a normalized version.<br/>
 	 * <b>N.B.</b> This information is obtained by using reflection to examine
 	 * private fields of the serialized model. If for any reason this process
 	 * fails then <code>null</code> will be returned, and the caller must be
@@ -123,4 +145,13 @@ public interface ModelService {
 	 *         <code>null</code> if the introspection fails.
 	 */
 	List<String> getAttributeNames();
+
+	/**
+	 * Transform a Pentacam field name into something human-readable by removing
+	 * junk such as a trailing colon or embedded &ldquo;.-&rdquo;.
+	 * 
+	 * @param s
+	 * @return
+	 */
+	String normalizeAttributeName(String s);
 }
