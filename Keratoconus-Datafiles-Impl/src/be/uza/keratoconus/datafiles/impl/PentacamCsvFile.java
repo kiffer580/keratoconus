@@ -180,7 +180,7 @@ public class PentacamCsvFile implements PentacamFile {
 			String[] header = csvParser.parseLine(reader.readLine());
 			for (int i = 0; i < header.length; ++i) {
 				String h = header[i];
-				h = stripJunk(h);
+				h = classificationModelService.normalizeAttributeName(h);
 				fieldNames.add(h);
 				PentacamFieldImpl pf = fieldMap.remove(h);
 				if (pf == null) {
@@ -215,7 +215,7 @@ public class PentacamCsvFile implements PentacamFile {
 					Runtime.getRuntime().exec( "cmd /k start " + manual6uri.toASCIIString());
 				}
 				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_ERROR, "Fields " + fields + " not found in file " + fileName + ".\n" +
-						"Probably your Pentacam software is not correctly configured - see chapter 6 \"Pentacm configuration\" of the User Manual for more information.");
+						"Probably your Pentacam software is not correctly configured - see chapter 6 \"Pentacam configuration\" of the User Manual for more information.");
 //				eventAdmin.postEvent(new ShowPageEvent("/html/manual6.html", pentacamConfigurationService.getApplicationTitle() + " - User Manual"));
 			}
 
@@ -294,26 +294,6 @@ public class PentacamCsvFile implements PentacamFile {
 				}
 			}
 		}
-	}
-
-	private String stripJunk(String s) {
-		StringBuilder sb = new StringBuilder(s);
-
-		while (sb.length() > 0) {
-			final int trailingMinus = sb.indexOf("- ");
-			if (trailingMinus > 0) {
-				sb.deleteCharAt(trailingMinus);
-				continue;
-			}
-			final int lengthMinusOne = sb.length() - 1;
-			final char lastChar = sb.charAt(lengthMinusOne);
-			if (lastChar == ':' || Character.isWhitespace(lastChar)) {
-				sb.setLength(lengthMinusOne);
-			} else {
-				break;
-			}
-		}
-		return sb.toString();
 	}
 
 	@Override
