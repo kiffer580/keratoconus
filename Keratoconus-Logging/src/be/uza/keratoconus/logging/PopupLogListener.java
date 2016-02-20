@@ -1,5 +1,9 @@
 package be.uza.keratoconus.logging;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.application.Platform;
@@ -21,7 +25,7 @@ import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 public class PopupLogListener implements LogListener {
 
 	private static final String APP_WILL_TERMINATE = "\n\nThe application will terminate.";
-	private static final String SEE_LOG_FILE = "See log file for exception stack trace.";
+	private static final String SEE_LOG_FILE = "See log file for exception stack trace:";
 	private PentacamConfigurationService pentacamConfigurationService;
 	private CopyOnWriteArrayList<LogReaderService> logReaderServices = new CopyOnWriteArrayList<>();
 	private volatile boolean stopping;
@@ -62,10 +66,14 @@ public class PopupLogListener implements LogListener {
 	private void showAlertDialogue(LogEntry entry, int level) {
 		String contentText = entry.getMessage();
 		final Alert alert = buildAlertDialogue(entry);
+		Path loggingDirectoryPath = pentacamConfigurationService.getLoggingDirectoryPath();
+		String[] logFileNames = loggingDirectoryPath.toFile().list();
+		Arrays.sort(logFileNames);
+		String lastLogFileName = logFileNames[logFileNames.length - 1];
 		switch (level) {
 		case LogService.LOG_WARNING:
 			if (entry.getException() != null) {
-				contentText += "\n\n" + SEE_LOG_FILE;
+				contentText += formatLogFileMessage(loggingDirectoryPath, lastLogFileName);
 			}
 			alert.setContentText(contentText);
 			alert.show();
@@ -73,7 +81,7 @@ public class PopupLogListener implements LogListener {
 
 		case LogService.LOG_ERROR:
 			if (entry.getException() != null) {
-				contentText += "\n\n" + SEE_LOG_FILE;
+				contentText += formatLogFileMessage(loggingDirectoryPath, lastLogFileName);
 			}
 			alert.setContentText(contentText
 					+ APP_WILL_TERMINATE);
@@ -83,6 +91,11 @@ public class PopupLogListener implements LogListener {
 
 		default:
 		}
+	}
+
+	private String formatLogFileMessage(Path loggingDirectoryPath,
+			String lastLogFileName) {
+		return "\n\n" + SEE_LOG_FILE + "\n" + loggingDirectoryPath + File.separator + lastLogFileName;
 	}
 
 	private Alert buildAlertDialogue(LogEntry entry) {
