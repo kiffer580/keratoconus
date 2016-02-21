@@ -6,13 +6,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URLConnection;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,8 +55,8 @@ public class PentacamCsvFile implements PentacamFile {
 	private Path directoryPath;
 	private Config config;
 	private final List<PentacamField> allFields = new ArrayList<PentacamField>();
-	private final List<PentacamField> commonFields = new ArrayList<PentacamField>();
-	private final List<PentacamField> usedFields = new ArrayList<PentacamField>();
+	private final Map<PentacamField, Integer> commonFieldsMap = new LinkedHashMap<PentacamField, Integer>();
+	private final Map<PentacamField, Integer> usedFieldsMap = new LinkedHashMap<PentacamField, Integer>();
 	private PentacamField bifacialDiscriminator;
 	private int bifacialDiscriminatorIndex = -1;
 	private char keyMemberSeparator;
@@ -63,8 +64,9 @@ public class PentacamCsvFile implements PentacamFile {
 	private LogService logService;
 	private Path filePath;
 	private char fieldSeparator;
-	private Map<String, PentacamFieldImpl> fieldMap;
+//	private Map<String, PentacamFieldImpl> fieldMap;
 	private ComponentContext ownComponentContext;
+	private CSVParser csvParser;
 
 	@Meta.OCD
 	interface Config {
@@ -89,7 +91,8 @@ public class PentacamCsvFile implements PentacamFile {
 	}
 
 	@Reference
-	protected void setPentacamConfigurationService(PentacamConfigurationService pcs) {
+	protected void setPentacamConfigurationService(
+			PentacamConfigurationService pcs) {
 		pentacamConfigurationService = pcs;
 	}
 
@@ -103,22 +106,8 @@ public class PentacamCsvFile implements PentacamFile {
 		keyMemberSeparator = pentacamConfigurationService
 				.getKeyMemberSeparator();
 		filePath = directoryPath.resolve(fileName + CSV);
-		logService.log(LogService.LOG_INFO, "Activating PentacamCsvFile instance for " + filePath);
-
-		fieldMap = new LinkedHashMap<String, PentacamFieldImpl>();
-		final String[] fieldDescriptors = config.pentacam_fields().split(
-				CONFIG_FILE_LIST_SEPARATOR);
-		for (String desc : fieldDescriptors) {
-			final PentacamFieldImpl pf = new PentacamFieldImpl(desc);
-			final String name = pf.getName();
-			fieldMap.put(name, pf);
-			if (pf.isDiscriminator()) {
-				bifacialDiscriminator = pf;
-			}
-			if (pf.isUsed()) {
-				usedFields.add(pf);
-			}
-		}
+		logService.log(LogService.LOG_INFO,
+				"Activating PentacamCsvFile instance for " + filePath);
 
 		final String pentacam_field_separator = config
 				.pentacam_field_separator();
@@ -127,34 +116,80 @@ public class PentacamCsvFile implements PentacamFile {
 		}
 	}
 
-	private char guessFieldSeparator() {
+	private BufferedReader parseHeaders() throws IOException,
+			URISyntaxException {
 		long deadline = System.currentTimeMillis() + 1000L;
-		while (true) {
-			try (BufferedReader reader = Files.newBufferedReader(filePath,
-					WINDOWS_1252)) {
-				String headerLine = reader.readLine();
+		String headerLine = null;
+		// Opening the file can quite easily fail because the Pentacam software
+		// has not yet finished closing it, so we build in some retries.
+		while (headerLine == null) {
+			try {
+				BufferedReader reader = Files.newBufferedReader(filePath,
+					WINDOWS_1252);
+				headerLine = reader.readLine();
 				int countCommas = headerLine.split(",").length - 1;
 				int countSemicolons = headerLine.split(";").length - 1;
-				if (countCommas > 1 && countCommas > countSemicolons) {
-					return ',';
+				if (countCommas > countSemicolons) {
+					fieldSeparator = ',';
+				} else if (countSemicolons > countCommas) {
+					fieldSeparator = ';';
+				} else {
+					logService
+							.log(ownComponentContext.getServiceReference(),
+									LogService.LOG_ERROR,
+									fileName
+											+ "  field delimiter is neither ',' nor ';' in header : "
+											+ headerLine);
+					reader.close();
+					return null;
 				}
-				if (countSemicolons > 1 && countSemicolons > countCommas) {
-					return ';';
+
+				final Map<String, PentacamFieldImpl> fieldMap = new LinkedHashMap<String, PentacamFieldImpl>();
+				final String[] fieldDescriptors = config.pentacam_fields()
+						.split(CONFIG_FILE_LIST_SEPARATOR);
+				for (final String desc : fieldDescriptors) {
+					final PentacamFieldImpl pf = new PentacamFieldImpl(desc);
+					final String name = pf.getName();
+					fieldMap.put(name, pf);
+					if (pf.isDiscriminator()) {
+						bifacialDiscriminator = pf;
+					}
 				}
-				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_ERROR, fileName +
-						"  field delimiter is neither ',' nor ';' in header : "  + headerLine);
-				return 0;
+				
+				csvParser = new CSVParser(fieldSeparator);
+				final List<String> commonFieldNames = Arrays
+						.asList(classificationModelService.getCommonFields());
+				final List<String> keyFieldNames = Arrays
+						.asList(classificationModelService.getKeyFields());
+				String[] header = csvParser.parseLine(headerLine);
+				readCsvHeaders(fieldMap, commonFieldNames, keyFieldNames, header);
+				Map<String, Integer> name2index = new HashMap<>();
+				for (int i = 0; i < allFields.size(); ++i) {
+					final PentacamField pf = allFields.get(i);
+					name2index.put(pf.getName(), i);
+				}
+				for (final String desc : fieldDescriptors) {
+					final PentacamFieldImpl pf = new PentacamFieldImpl(desc);
+					final String name = pf.getName();
+					if (pf.isUsed()) {
+						usedFieldsMap.put(pf, name2index.get(name));
+					}
+				}
+				return reader;
+
 			} catch (IOException e) {
 				if (System.currentTimeMillis() >= deadline) {
-					logService.log(ownComponentContext.getServiceReference(), LogService.LOG_ERROR, "Exception thrown while trying to guess field separator in file " + fileName, e);
-					// in failure cases we return the null character
-					return 0;
+					throw e;
 				}
-				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_INFO, "Exception thrown while trying to guess field separator in file " + fileName + ", retrying", e);
+				logService.log(ownComponentContext.getServiceReference(),
+						LogService.LOG_INFO,
+						"Exception thrown while trying to guess field separator in file "
+								+ fileName + ", retrying", e);
 				takeANap();
 			}
 		}
 
+		return null;
 	}
 
 	private void takeANap() {
@@ -164,70 +199,9 @@ public class PentacamCsvFile implements PentacamFile {
 		}
 	}
 
-	private List<String[]> readCsvFile() {
+	private List<String[]> readCsvFile() throws IOException, URISyntaxException {
 		List<String[]> newRecords = new ArrayList<String[]>();
-		final List<String> commonFieldNames = Arrays
-				.asList(classificationModelService.getCommonFields());
-		final List<String> keyFieldNames = Arrays
-				.asList(classificationModelService.getKeyFields());
-		if (fieldSeparator == 0) {
-			fieldSeparator = guessFieldSeparator();
-		}
-		CSVParser csvParser = new CSVParser(fieldSeparator);
-		try (BufferedReader reader = Files.newBufferedReader(filePath,
-				WINDOWS_1252)) {
-			final List<String> fieldNames = new ArrayList<String>();
-			String[] header = csvParser.parseLine(reader.readLine());
-			for (int i = 0; i < header.length; ++i) {
-				String h = header[i];
-				h = classificationModelService.normalizeAttributeName(h);
-				fieldNames.add(h);
-				PentacamFieldImpl pf = fieldMap.remove(h);
-				if (pf == null) {
-					allFields.add(new PentacamFieldImpl(h, false, false));
-				} else {
-					allFields.add(pf);
-					if (pf.equals(bifacialDiscriminator)) {
-						bifacialDiscriminatorIndex = i;
-					}
-				}
-			}
-
-			for (String f : commonFieldNames) {
-				if (fieldNames.contains(f)) {
-					commonFields.add(new PentacamFieldImpl(f, keyFieldNames
-							.contains(f), true));
-				}
-			}
-
-			if (!fieldMap.isEmpty()) {
-				final Set<String> fields = new HashSet<>();
-				for (PentacamFieldImpl pfi : fieldMap.values()) {
-					fields.add(pfi.getName());
-				}
-				String homeDirectory = System.getProperty("user.dir").replace('\\', '/');
-				URI manual6uri = new URI("file", "",
-						"/" + homeDirectory + "/html/manual6.html", null, null);
-				if (Desktop.isDesktopSupported()) {
-					Desktop.getDesktop().browse(manual6uri);
-				}
-				else {
-					Runtime.getRuntime().exec( "cmd /k start " + manual6uri.toASCIIString());
-				}
-				logService.log(ownComponentContext.getServiceReference(), LogService.LOG_ERROR, "Fields " + fields + " not found in file " + fileName + ".\n" +
-						"Probably your Pentacam software is not correctly configured - see chapter 6 \"Pentacam configuration\" of the User Manual for more information.");
-//				eventAdmin.postEvent(new ShowPageEvent("/html/manual6.html", pentacamConfigurationService.getApplicationTitle() + " - User Manual"));
-			}
-
-			keyIndices = new ArrayList<Integer>();
-			for (String aKeyField : keyFieldNames) {
-				int index = fieldNames.indexOf(aKeyField);
-				if (index < 0) {
-					logService.log(ownComponentContext.getServiceReference(), LogService.LOG_WARNING, "Key field " + aKeyField + " not found in file " + fileName);
-				}
-				keyIndices.add(index);
-			}
-
+		try (BufferedReader reader = parseHeaders()) {
 			String line = reader.readLine();
 			while (line != null) {
 				final String[] r = csvParser.parseLine(line);
@@ -243,19 +217,90 @@ public class PentacamCsvFile implements PentacamFile {
 				newRecords.add(r);
 				line = reader.readLine();
 			}
-			logService.log(ownComponentContext.getServiceReference(), LogService.LOG_INFO, "Read " + records
-					.size() + " records from file " + fileName);
+			logService.log(ownComponentContext.getServiceReference(),
+					LogService.LOG_INFO, "Read " + records.size()
+							+ " records from file " + fileName);
 		} catch (Exception e) {
-			logService.log(ownComponentContext.getServiceReference(), LogService.LOG_WARNING, "Unable to read " + filePath, e);
+			logService.log(ownComponentContext.getServiceReference(),
+					LogService.LOG_WARNING, "Unable to read " + filePath, e);
 		}
 		return newRecords;
+	}
+
+	private void readCsvHeaders(final Map<String, PentacamFieldImpl> fieldMap, final List<String> commonFieldNames,
+			final List<String> keyFieldNames, String[] header)
+			throws IOException, URISyntaxException {
+		final List<String> fieldNames = new ArrayList<String>();
+		for (int i = 0; i < header.length; ++i) {
+			String h = header[i];
+			h = classificationModelService.normalizeAttributeName(h);
+			fieldNames.add(h);
+			PentacamFieldImpl pf = fieldMap.remove(h);
+			if (pf == null) {
+				allFields.add(new PentacamFieldImpl(h, false, false));
+			} else {
+				allFields.add(pf);
+				if (pf.equals(bifacialDiscriminator)) {
+					bifacialDiscriminatorIndex = i;
+				}
+			}
+		}
+
+		for (String f : commonFieldNames) {
+			final int fieldIndex = fieldNames.indexOf(f);
+			if (fieldIndex >= 0) {
+				PentacamFieldImpl pf = new PentacamFieldImpl(f,
+						keyFieldNames.contains(f), true);
+				commonFieldsMap.put(pf, fieldIndex);
+			}
+		}
+
+		if (!fieldMap.isEmpty()) {
+			final Set<String> fields = new HashSet<>();
+			for (PentacamFieldImpl pfi : fieldMap.values()) {
+				fields.add(pfi.getName());
+			}
+			String homeDirectory = System.getProperty("user.dir").replace('\\',
+					'/');
+			URI manual6uri = new URI("file", "", "/" + homeDirectory
+					+ "/html/manual6.html", null, null);
+			if (Desktop.isDesktopSupported()) {
+				Desktop.getDesktop().browse(manual6uri);
+			} else {
+				Runtime.getRuntime().exec(
+						"cmd /k start " + manual6uri.toASCIIString());
+			}
+			logService
+					.log(ownComponentContext.getServiceReference(),
+							LogService.LOG_ERROR,
+							"Fields "
+									+ fields
+									+ " not found in file "
+									+ fileName
+									+ ".\n"
+									+ "Probably your Pentacam software is not correctly configured - see chapter 6 \"Pentacam configuration\" of the User Manual for more information.");
+			// eventAdmin.postEvent(new ShowPageEvent("/html/manual6.html",
+			// pentacamConfigurationService.getApplicationTitle() +
+			// " - User Manual"));
+		}
+
+		keyIndices = new ArrayList<Integer>();
+		for (String aKeyField : keyFieldNames) {
+			int index = fieldNames.indexOf(aKeyField);
+			if (index < 0) {
+				logService.log(ownComponentContext.getServiceReference(),
+						LogService.LOG_WARNING, "Key field " + aKeyField
+								+ " not found in file " + fileName);
+			}
+			keyIndices.add(index);
+		}
 	}
 
 	private List<String[]> readNewRecords(long startOffset) throws IOException {
 		List<String[]> newRecords = new ArrayList<String[]>();
 		CSVParser csvParser = new CSVParser(fieldSeparator);
 		InputStream is = openInputStream();
-		
+
 		try {
 			is.skip(startOffset);
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -275,8 +320,9 @@ public class PentacamCsvFile implements PentacamFile {
 				newRecords.add(r);
 				line = reader.readLine();
 			}
-			logService.log(ownComponentContext.getServiceReference(), LogService.LOG_INFO, "Read " + records
-					.size() + " new records from file " + fileName);
+			logService.log(ownComponentContext.getServiceReference(),
+					LogService.LOG_INFO, "Read " + records.size()
+							+ " new records from file " + fileName);
 			return newRecords;
 		} finally {
 			is.close();
@@ -346,13 +392,13 @@ public class PentacamCsvFile implements PentacamFile {
 	}
 
 	@Override
-	public List<PentacamField> getCommonFields() {
-		return commonFields;
+	public Map<PentacamField, Integer> getCommonFieldsMap() {
+		return commonFieldsMap;
 	}
 
 	@Override
-	public List<PentacamField> getUsedFields() {
-		return usedFields;
+	public Map<PentacamField, Integer> getUsedFieldsMap() {
+		return usedFieldsMap;
 	}
 
 	@Override
@@ -367,13 +413,15 @@ public class PentacamCsvFile implements PentacamFile {
 	public List<String[]> getNewRecords(long startOffset) {
 		try {
 			if (keyIndices == null) {
-				fieldSeparator = guessFieldSeparator();
+				// fieldSeparator = guessFieldSeparator();
 				return readCsvFile();
 			}
 			return readNewRecords(startOffset);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logService.log(ownComponentContext.getServiceReference(), LogService.LOG_WARNING, "Unable to read new records in file " + fileName, e);
+			logService.log(ownComponentContext.getServiceReference(),
+					LogService.LOG_WARNING,
+					"Unable to read new records in file " + fileName, e);
 			return Collections.emptyList();
 		}
 	}
@@ -387,7 +435,7 @@ public class PentacamCsvFile implements PentacamFile {
 				+ (bifacialDiscriminator == null ? ""
 						: ", bifacial with discriminator "
 								+ bifacialDiscriminator.getName())
-				+ ", allFields=" + allFields + ", usedFields=" + usedFields
+				+ ", allFields=" + allFields + ", usedFields=" + usedFieldsMap
 				+ ", " + records.size() + " records ]";
 	}
 

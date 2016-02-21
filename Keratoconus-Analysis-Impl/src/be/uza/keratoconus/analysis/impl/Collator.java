@@ -193,12 +193,16 @@ public class Collator implements EventHandler {
 	private boolean isComplete(Map<String, String[][]> datafileRecords) {
 		Set<String> datafileRecordKeys = new HashSet<>(datafileRecords.keySet());
 		for (String k : allFileKeys) {
-			if (!datafileRecordKeys.remove(k) && !datafileRecordKeys.remove(k + "-LOAD")) {
+			if (!datafileRecordKeys.remove(k)
+					&& !datafileRecordKeys.remove(k + "-LOAD")) {
 				return false;
-			};
+			}
+			;
 		}
 		if (datafileRecordKeys.size() > 0) {
-			logService.log(LogService.LOG_WARNING, "Found excess data records for file(s): " + datafileRecordKeys);
+			logService.log(LogService.LOG_WARNING,
+					"Found excess data records for file(s): "
+							+ datafileRecordKeys);
 		}
 		return true;
 	}
@@ -209,16 +213,16 @@ public class Collator implements EventHandler {
 		PatientExam examRecord = patientExamService
 				.createPatientExamRecord(patientKey);
 		for (String fk : allFileKeys) {
-			final String baseName = datafileRecords.containsKey(fk) ? fk : fk + FILENAME_SUFFIX_LOAD;
+			final String baseName = datafileRecords.containsKey(fk) ? fk : fk
+					+ FILENAME_SUFFIX_LOAD;
 			final String[][] records = datafileRecords.get(baseName);
 			PentacamFile pf = pentacamFilesService.getFileByBaseName(baseName);
 			if (pf.isBifacial()) {
-				examRecord.addData(pf.getBaseName(), pf.getAllFields(),
-						pf.getCommonFields(), pf.getUsedFields(), records[0],
-						records[1]);
+				examRecord.addData(pf.getBaseName(), pf.getCommonFieldsMap(),
+						pf.getUsedFieldsMap(), records[0], records[1]);
 			} else {
-				examRecord.addData(pf.getBaseName(), pf.getAllFields(),
-						pf.getCommonFields(), pf.getUsedFields(), records[0]);
+				examRecord.addData(pf.getBaseName(), pf.getCommonFieldsMap(),
+						pf.getUsedFieldsMap(), records[0]);
 			}
 		}
 
@@ -270,15 +274,15 @@ public class Collator implements EventHandler {
 		if (result != null) {
 			return result;
 		}
-		
+
 		return ClassificationService.AMBIGUOUS;
 	}
 
 	private String checkAgainstThreshold(double level, double threshold,
 			String over) {
-				if (level > threshold) {
-					return over;
-				}
+		if (level > threshold) {
+			return over;
+		}
 		return null;
 	}
 

@@ -1,6 +1,5 @@
 package be.uza.keratoconus.datafiles.api;
 
-import java.util.List;
 import java.util.Map;
 
 import aQute.bnd.annotation.ProviderType;
@@ -19,30 +18,33 @@ public interface PatientExam {
 	 * Add some fields to this exam (normal case).
 	 * 
 	 * @param baseName
-	 * @param allFields
-	 *            the complete list of fields in <code>record</code>.
-	 * @param commonFields
-	 *            the common fields relating to the exam results.
-	 * @param usedFields
-	 *            the new fields which must be added to the exam results.
+	 *            base name of the file from which these fields are taken (used
+	 *            only for error reporting).
+	 * @param commonFieldsMap
+	 *            the fields which are common to several files, mapped to their
+	 *            offset in the record.
+	 * @param usedFieldsMap
+	 *            the new fields which must be added to the exam results, mapped
+	 *            to their offset in the record.
 	 * @param record
 	 *            the values of all fields, in the same order as in
 	 *            <code>allFields</code>.
 	 */
-	void addData(String baseName, List<PentacamField> allFields,
-			List<PentacamField> commonFields, List<PentacamField> usedFields,
-			String[] record);
+	void addData(String baseName, Map<PentacamField, Integer> commonFieldsMap,
+			Map<PentacamField, Integer> usedFieldsMap, String[] record);
 
 	/**
 	 * Add some fields to this exam (bifacial case).
 	 * 
 	 * @param baseName
-	 * @param allFields
-	 *            the complete list of fields in <code>record</code>.
-	 * @param commonFields
-	 *            the common fields relating to the exam results.
-	 * @param usedFields
-	 *            the fields which must be added to the exam results.
+	 *            base name of the file from which these fields are taken (used
+	 *            only for error reporting).
+	 * @param commonFieldsMap
+	 *            the new fields which are common to several files, mapped to
+	 *            their offset in the record.
+	 * @param usedFieldsMap
+	 *            the new fields which must be added to the exam results, mapped
+	 *            to their offset in the record.
 	 * @param frontRecord
 	 *            the values of all fields for the FRONT (anterior) surface, in
 	 *            the same order as in <code>allFields</code>.
@@ -50,9 +52,9 @@ public interface PatientExam {
 	 *            the values of all fields for the BACK (posterior) surface, in
 	 *            the same order as in <code>allFields</code>.
 	 */
-	void addData(String baseName, List<PentacamField> allFields,
-			List<PentacamField> commonFields, List<PentacamField> usedFields,
-			String[] frontRecord, String[] backRecord);
+	void addData(String baseName, Map<PentacamField, Integer> commonFieldsMap,
+			Map<PentacamField, Integer> usedFieldsMap, String[] frontRecord,
+			String[] backRecord);
 
 	/**
 	 * Get the data for this exam in the form of a map fieldname &rarr; value.
