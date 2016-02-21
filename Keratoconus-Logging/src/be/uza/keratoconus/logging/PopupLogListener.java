@@ -3,14 +3,11 @@ package be.uza.keratoconus.logging;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 
 import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogListener;
@@ -67,7 +64,7 @@ public class PopupLogListener implements LogListener {
 		String contentText = entry.getMessage();
 		final Alert alert = buildAlertDialogue(entry);
 		Path loggingDirectoryPath = pentacamConfigurationService.getLoggingDirectoryPath();
-		String[] logFileNames = loggingDirectoryPath.toFile().list();
+		String[] logFileNames = loggingDirectoryPath.toFile().list((dir, name) -> name.startsWith("keratoconus-log-"));
 		Arrays.sort(logFileNames);
 		String lastLogFileName = logFileNames[logFileNames.length - 1];
 		switch (level) {
