@@ -23,7 +23,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.ConfigurationPolicy;
 import aQute.bnd.annotation.component.Reference;
-import be.uza.keratoconus.model.api.AttributeNames;
+import be.uza.keratoconus.model.api.FieldQualifierNames;
 import be.uza.keratoconus.model.api.ModelService;
 
 @Component(configurationPolicy = ConfigurationPolicy.require)
@@ -39,7 +39,7 @@ public class ModelServiceImpl implements ModelService {
 	
 	private class FieldDescriptor {
 		private String fieldname;
-		private List<String> fieldAttributes = new ArrayList<>();
+		private List<String> fieldQualifiers = new ArrayList<>();
 		private String filebasename;
 
 		private FieldDescriptor(String descriptor) {
@@ -50,7 +50,7 @@ public class ModelServiceImpl implements ModelService {
 					fieldname = descriptor;
 				} else {
 					fieldname = descriptor.substring(0, semicolon);
-					fieldAttributes = Arrays.asList(descriptor.substring(
+					fieldQualifiers = Arrays.asList(descriptor.substring(
 							semicolon + 1).split(ModelConstants.SEMICOLON));
 				}
 				// filebasename remains null in this case
@@ -61,7 +61,7 @@ public class ModelServiceImpl implements ModelService {
 					logService.log(LogService.LOG_ERROR, "Error in pentacam.fields.used property: in item " + descriptor + " first colon (:) precedes first semicolon (;).");
 				} else {
 					fieldname = descriptor.substring(0, semicolon);
-					fieldAttributes = Arrays.asList(descriptor.substring(
+					fieldQualifiers = Arrays.asList(descriptor.substring(
 							semicolon + 1, colon).split(ModelConstants.SEMICOLON));
 				}
 				filebasename = descriptor.substring(colon + 1);
@@ -72,8 +72,8 @@ public class ModelServiceImpl implements ModelService {
 			return fieldname;
 		}
 		
-		private List<String> getFieldAttributes() {
-			return fieldAttributes;
+		private List<String> getFieldQualifiers() {
+			return fieldQualifiers;
 		}
 		
 		private String getFileBaseName() {
@@ -231,12 +231,12 @@ public class ModelServiceImpl implements ModelService {
 				.split(ModelConstants.COMMA);
 		// TODO replace checkFields by a Map<String,List<String>> with a more meaningful name
 		Map<String,String> checkFields = new HashMap<>();
-		Map<String,Map<String,List<String>>> fieldAttributesMap = new HashMap<>();
+		Map<String,Map<String,List<String>>> fieldQualifiersMap = new HashMap<>();
 		List<String> localUsedFields = new ArrayList<>();
 		List<String> usedFieldDescriptors = Arrays.asList(((String) config.get("pentacam.fields.used")).split(ModelConstants.COMMA));
 		for (String descriptor : usedFieldDescriptors) {
 			FieldDescriptor fd = new FieldDescriptor(descriptor);
-			if (!fd.getFieldAttributes().contains(AttributeNames.DISCRIMINATOR)) {
+			if (!fd.getFieldQualifiers().contains(FieldQualifierNames.DISCRIMINATOR)) {
 				localUsedFields.add(fd.getFieldName());
 			}
 			String fbn = fd.getFileBaseName();
@@ -245,23 +245,18 @@ public class ModelServiceImpl implements ModelService {
 				return;
 			}
 			String check = checkFields.get(fd.getFileBaseName());
-			Map<String,List<String>> fileattrs;
+			Map<String,List<String>> filequals;
 			if (check == null) {
 				checkFields.put(fbn, fd.getFieldName());
-				fileattrs = new HashMap<>();
-				fieldAttributesMap.put(fbn, fileattrs);
+				filequals = new HashMap<>();
+				fieldQualifiersMap.put(fbn, filequals);
 			}
 			else {
 				checkFields.put(fbn,  check + "," + fd.getFieldName());
-				fileattrs = fieldAttributesMap.get(fbn);
+				filequals = fieldQualifiersMap.get(fbn);
 			}
-			fileattrs.put(fd.getFieldName(), fd.getFieldAttributes());
+			filequals.put(fd.getFieldName(), fd.getFieldQualifiers());
 		}
-		
-//		for (String fbn : checkFields.keySet()) {
-//			System.out.println("checkAttributes[" + fbn + "] = " + fieldAttributesMap.get(fbn));
-//			System.out.println("checkFields[" + fbn + "] = " + checkFields.get(fbn));
-//		}
 		
 		String[] localFileBaseNames = ((String) config.get("pentacam.files")).split(ModelConstants.COMMA);
 		for (String fbn : localFileBaseNames) {
@@ -269,14 +264,13 @@ public class ModelServiceImpl implements ModelService {
 			StringBuilder sb = new StringBuilder();
 			for (String fieldname : checkFields.get(fbn).split(ModelConstants.COMMA)) {
 				sb.append(fieldname);
-				for (String attr : fieldAttributesMap.get(fbn).get(fieldname)) {
+				for (String attr : fieldQualifiersMap.get(fbn).get(fieldname)) {
 					sb.append(ModelConstants.SEMICOLON);
 					sb.append(attr);
 				}
 				sb.append(ModelConstants.COMMA);
 			}
 			sb.setLength(sb.length() - 1);
-//			System.out.println("     fields[" + fbn + "] = " + sb);
 			fields.put(fbn, sb.toString());
 		}
 		usedFields = localUsedFields.toArray(new String[localUsedFields.size()]);
@@ -286,15 +280,15 @@ public class ModelServiceImpl implements ModelService {
 	@SuppressWarnings("unchecked")
 	private <T> T examineField(Object obj, String fieldName)
 			throws NoSuchFieldException, IllegalAccessException {
-		T classAttribute;
+		T fieldValue;
 		NoSuchFieldException exception = new NoSuchFieldException(fieldName);
 		Class<? extends Object> objClass = obj.getClass();
 		while (objClass != Object.class) {
 			try {
-				Field classAttributeField = objClass.getDeclaredField(fieldName);
-				classAttributeField.setAccessible(true);
-				classAttribute = (T) classAttributeField.get(obj);
-				return classAttribute;				
+				Field f = objClass.getDeclaredField(fieldName);
+				f.setAccessible(true);
+				fieldValue = (T) f.get(obj);
+				return fieldValue;				
 			}
 			catch (NoSuchFieldException nsfe) {
 				exception = nsfe;
@@ -312,10 +306,10 @@ public class ModelServiceImpl implements ModelService {
 		for (String filedesc : fields.values()) {
 			for (String descriptor : filedesc.split(ModelConstants.COMMA)) {
 				FieldDescriptor fd = new FieldDescriptor(descriptor);
-				if (fd.getFieldAttributes().contains(AttributeNames.DISCRIMINATOR)) {
+				if (fd.getFieldQualifiers().contains(FieldQualifierNames.DISCRIMINATOR)) {
 					continue;
 				}
-				if (fd.getFieldAttributes().contains(AttributeNames.BIFACIAL)) {
+				if (fd.getFieldQualifiers().contains(FieldQualifierNames.BIFACIAL)) {
 					if (!expectedFieldNames.remove(fd.getFieldName() + " FRONT")) {
 						fieldNotInModelWarning(fd.getFieldName() + " FRONT");
 					}

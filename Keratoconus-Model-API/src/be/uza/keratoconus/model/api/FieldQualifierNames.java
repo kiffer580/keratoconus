@@ -1,6 +1,6 @@
 package be.uza.keratoconus.model.api;
 
-public abstract class AttributeNames {
+public abstract class FieldQualifierNames {
 
 	/**
 	 * Attribute indicating that a field exists in two variants, anterior and posterior..

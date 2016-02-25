@@ -27,7 +27,7 @@ public class Classification {
 	public static final String UNRELIABLE = "Unreliable";
 
 	private final String key;
-	private final List<String> attributes;
+	private final List<String> qualifiers;
 
 	/**
 	 * Classifications are divided into a number of categories for purposes such
@@ -80,9 +80,9 @@ public class Classification {
 	public Classification(String s) {
 		String[] split = s.split(";");
 		key = split[0];
-		attributes = new ArrayList<String>();
+		qualifiers = new ArrayList<String>();
 		for (int i = 1; i < split.length; ++i) {
-			attributes.add(split[i]);
+			qualifiers.add(split[i]);
 		}
 	}
 
@@ -93,7 +93,7 @@ public class Classification {
 	 */
 	public Classification(String key, Category cat) {
 		this.key = key;
-		attributes = Collections.singletonList(cat.name().toLowerCase());
+		qualifiers = Collections.singletonList(cat.name().toLowerCase());
 	}
 
 	public String getKey() {
@@ -101,28 +101,28 @@ public class Classification {
 	}
 
 	public boolean isNormal() {
-		return attributes.contains(Category.NORMAL.name().toLowerCase());
+		return qualifiers.contains(Category.NORMAL.name().toLowerCase());
 	}
 
 	public boolean isAmbiguous() {
-		return attributes.contains(Category.AMBIGUOUS.name().toLowerCase());
+		return qualifiers.contains(Category.AMBIGUOUS.name().toLowerCase());
 	}
 
 	public boolean isUnreliable() {
-		return attributes.contains(Category.BAD.name().toLowerCase());
+		return qualifiers.contains(Category.BAD.name().toLowerCase());
 	}
 
 	public boolean isSide() {
-		return attributes.contains(Category.SIDE.name().toLowerCase());
+		return qualifiers.contains(Category.SIDE.name().toLowerCase());
 	}
 
 	public boolean isMain() {
-		return attributes.contains(Category.MAIN.name().toLowerCase());
+		return qualifiers.contains(Category.MAIN.name().toLowerCase());
 	}
 
 	public Category getCategory() {
 		for (Category c : Category.values()) {
-			if (attributes.contains(c.name().toLowerCase())) {
+			if (qualifiers.contains(c.name().toLowerCase())) {
 				return c;
 			}
 		}
@@ -130,13 +130,13 @@ public class Classification {
 		return Category.AMBIGUOUS;
 	}
 	
-	public List<String> getAttributes() {
-		return attributes;
+	public List<String> getQualifiers() {
+		return qualifiers;
 	}
 
 	@Override
 	public String toString() {
-		return "Classification [key=" + key + ", attributes=" + attributes
+		return "Classification [key=" + key + ", qualifiers=" + qualifiers
 				+ "]";
 	}
 }

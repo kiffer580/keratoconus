@@ -64,7 +64,6 @@ public class PentacamCsvFile implements PentacamFile {
 	private LogService logService;
 	private Path filePath;
 	private char fieldSeparator;
-//	private Map<String, PentacamFieldImpl> fieldMap;
 	private ComponentContext ownComponentContext;
 	private CSVParser csvParser;
 
@@ -280,9 +279,6 @@ public class PentacamCsvFile implements PentacamFile {
 									+ fileName
 									+ ".\n"
 									+ "Probably your Pentacam software is not correctly configured - see chapter 6 \"Pentacam configuration\" of the User Manual for more information.");
-			// eventAdmin.postEvent(new ShowPageEvent("/html/manual6.html",
-			// pentacamConfigurationService.getApplicationTitle() +
-			// " - User Manual"));
 		}
 
 		keyIndices = new ArrayList<Integer>();

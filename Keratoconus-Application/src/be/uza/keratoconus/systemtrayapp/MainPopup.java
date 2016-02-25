@@ -402,7 +402,7 @@ public class MainPopup implements org.osgi.service.event.EventHandler {
 			mainBox.getStyleClass().add("popup-root");
 			mainBox.getStyleClass().add("popup-root-" + headlineKey);
 			for (String attribute : classificationService.getByKey(headlineKey)
-					.getAttributes()) {
+					.getQualifiers()) {
 				mainBox.getStyleClass().add("popup-root-" + attribute);
 			}
 			mainPane.setPrefWidth(windowPreferredWidth);
