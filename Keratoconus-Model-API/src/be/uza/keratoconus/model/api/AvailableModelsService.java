@@ -21,13 +21,12 @@ public interface AvailableModelsService {
 	/**
 	 * Get the human-readable description of an available models given its name.
 	 */
-	String getModeDescription(String name);
+	String getModelDescription(String name);
 
 	/**
 	 * Select the model to be used. This should be called before any of the
-	 * methods {@link #getCommonFields()}, {@link #getKeyFields()},
-	 * {@link #getFileBaseNames()}, {@link #getFieldsOfFile(String)},
-	 * {@link #getSeparatorForFile(String)} are called.
+	 * methods {@link #getCommonFields()}, {@link #getKeyFields()}
+	 * are called.
 	 * 
 	 * @param name
 	 *            The name of the model (must be one of those returned by

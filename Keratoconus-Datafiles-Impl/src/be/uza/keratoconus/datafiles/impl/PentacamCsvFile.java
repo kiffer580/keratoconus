@@ -77,7 +77,7 @@ public class PentacamCsvFile implements PentacamFile {
 		String pentacam_field_separator();
 
 		@Meta.AD(required = true, description = "List of fields in this file which are used by the application.")
-		String pentacam_fields();
+		List<String> pentacam_fields();
 	}
 
 	@Reference
@@ -145,8 +145,7 @@ public class PentacamCsvFile implements PentacamFile {
 				}
 
 				final Map<String, PentacamFieldImpl> fieldMap = new LinkedHashMap<String, PentacamFieldImpl>();
-				final String[] fieldDescriptors = config.pentacam_fields()
-						.split(CONFIG_FILE_LIST_SEPARATOR);
+				final List<String> fieldDescriptors = config.pentacam_fields();
 				for (final String desc : fieldDescriptors) {
 					final PentacamFieldImpl pf = new PentacamFieldImpl(desc);
 					final String name = pf.getName();
@@ -237,6 +236,12 @@ public class PentacamCsvFile implements PentacamFile {
 			fieldNames.add(h);
 			PentacamFieldImpl pf = fieldMap.remove(h);
 			if (pf == null) {
+				pf = fieldMap.remove(h + " FRONT");
+			}
+			if (pf == null) {
+				pf = fieldMap.remove(h + " BACK");
+			}
+			if (pf == null) {
 				allFields.add(new PentacamFieldImpl(h, false, false));
 			} else {
 				allFields.add(pf);
@@ -256,10 +261,6 @@ public class PentacamCsvFile implements PentacamFile {
 		}
 
 		if (!fieldMap.isEmpty()) {
-			final Set<String> fields = new HashSet<>();
-			for (PentacamFieldImpl pfi : fieldMap.values()) {
-				fields.add(pfi.getName());
-			}
 			String homeDirectory = System.getProperty("user.dir").replace('\\',
 					'/');
 			URI manual6uri = new URI("file", "", "/" + homeDirectory
@@ -274,7 +275,7 @@ public class PentacamCsvFile implements PentacamFile {
 					.log(ownComponentContext.getServiceReference(),
 							LogService.LOG_ERROR,
 							"Fields "
-									+ fields
+									+ fieldMap.keySet()
 									+ " not found in file "
 									+ fileName
 									+ ".\n"

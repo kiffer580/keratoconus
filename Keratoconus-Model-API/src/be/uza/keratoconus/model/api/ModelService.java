@@ -19,6 +19,12 @@ public interface ModelService {
 	public static final String MODEL_NAME = "model.name";
 
 	/**
+	 * Get the (short) name of the model.
+	 * @return
+	 */
+	String getModelName();
+
+	/**
 	 * Names of the common fields which occur in several files (although not
 	 * always in the same position). These fields will be presented in the
 	 * master file in the order given (before the data fields).
@@ -50,7 +56,7 @@ public interface ModelService {
 	 * 
 	 * @param fbn
 	 *            The file base name as it occurs in the output of
-	 *            {@link #getFileBaseNames()}.
+	 *            {@link ModelFileService#getFileBaseNames()}.
 	 * @return the separator, usually ";" or ",".
 	 */
 	String getSeparatorForFile(String fbn);
@@ -60,7 +66,7 @@ public interface ModelService {
 	 * 
 	 * @param fbn
 	 *            The file base name as it occurs in the output of
-	 *            {@link #getFileBaseNames()}.
+	 *            {@link ModelFileService#getFileBaseNames()}.
 	 * @return the field names, as a comma-separated list.
 	 */
 	String getFieldsOfFile(String fbn);

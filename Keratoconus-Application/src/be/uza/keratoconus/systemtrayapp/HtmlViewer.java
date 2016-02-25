@@ -87,7 +87,7 @@ public class HtmlViewer implements HtmlViewerService, EventHandler {
 				webView.setPrefWidth(width);
 				String selectedModelName = availableModelsService.getSelectedModelName();
 				webView.getEngine().executeScript("document.getElementById('modelname').textContent='" + selectedModelName + "'");
-				webView.getEngine().executeScript("document.getElementById('modeldescription').textContent='" + availableModelsService.getModeDescription(selectedModelName) + "'");
+				webView.getEngine().executeScript("document.getElementById('modeldescription').textContent='" + availableModelsService.getModelDescription(selectedModelName) + "'");
 				theStage.sizeToScene();
 			});
 		} catch (Exception e) {

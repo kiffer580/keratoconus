@@ -137,7 +137,7 @@ public class AvailableModelServicesImpl implements AvailableModelsService {
 	}
 
 	@Override
-	public String getModeDescription(String name) {
+	public String getModelDescription(String name) {
 		return modelNamesAndDescriptions.get(name);
 	}
 

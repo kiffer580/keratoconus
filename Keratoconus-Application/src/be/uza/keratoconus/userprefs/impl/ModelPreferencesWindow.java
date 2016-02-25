@@ -105,7 +105,7 @@ public class ModelPreferencesWindow extends AbstractPreferencesWindow implements
 				Text titleText = new Text(title);
 				titleText.getStyleClass().add(STYLE_CLASS_TITLE);
 				Label descriptionLabel = new Label(
-						availableModelsService.getModeDescription(modelName));
+						availableModelsService.getModelDescription(modelName));
 				descriptionLabel.getStyleClass().add(STYLE_CLASS_DESCRIPTION);
 				rb.setGraphic(new VBox(titleText, descriptionLabel));
 				rb.getStyleClass().add(STYLE_CLASS_BUTTON);

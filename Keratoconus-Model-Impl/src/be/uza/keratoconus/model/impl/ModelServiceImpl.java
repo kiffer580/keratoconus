@@ -37,30 +37,21 @@ public class ModelServiceImpl implements ModelService {
 		}
 	}
 	
-	private static final String CONFIG_FORMAT_VERSION = "config.format.version";
-	private static final String CONFIG_PATH_PREFIX = "/config/";
-	private static final String CONFIG_PATH_SUFFIX = ".properties";
-	private static final String MODEL_PATH_PREFIX = "/model/";
-	private static final String MODEL_PATH_SUFFIX = ".model";
-	private static final String COMMA = ",";
-	private static final String COLON = ":";
-	private static final String SEMICOLON = ";";
-	
 	private class FieldDescriptor {
 		private String fieldname;
 		private List<String> fieldAttributes = new ArrayList<>();
 		private String filebasename;
 
 		private FieldDescriptor(String descriptor) {
-			int colon = descriptor.lastIndexOf(COLON);
-			int semicolon = descriptor.indexOf(SEMICOLON);
+			int colon = descriptor.lastIndexOf(ModelConstants.COLON);
+			int semicolon = descriptor.indexOf(ModelConstants.SEMICOLON);
 			if (colon < 0) {
 				if (semicolon < 0) {
 					fieldname = descriptor;
 				} else {
 					fieldname = descriptor.substring(0, semicolon);
 					fieldAttributes = Arrays.asList(descriptor.substring(
-							semicolon + 1).split(SEMICOLON));
+							semicolon + 1).split(ModelConstants.SEMICOLON));
 				}
 				// filebasename remains null in this case
 			} else {
@@ -71,7 +62,7 @@ public class ModelServiceImpl implements ModelService {
 				} else {
 					fieldname = descriptor.substring(0, semicolon);
 					fieldAttributes = Arrays.asList(descriptor.substring(
-							semicolon + 1, colon).split(SEMICOLON));
+							semicolon + 1, colon).split(ModelConstants.SEMICOLON));
 				}
 				filebasename = descriptor.substring(colon + 1);
 			}
@@ -190,7 +181,7 @@ public class ModelServiceImpl implements ModelService {
 		}
 		Object serializedObject = weka.core.SerializationHelper.read(getClass()
 				.getResourceAsStream(
-						MODEL_PATH_PREFIX + modelName + MODEL_PATH_SUFFIX));
+						ModelConstants.MODEL_PATH_PREFIX + modelName + ModelConstants.MODEL_PATH_SUFFIX));
 		classifier = (AbstractClassifier) serializedObject;
 		try {
 			modelAttributes = new ModelAttributes(classifier);
@@ -205,14 +196,14 @@ public class ModelServiceImpl implements ModelService {
 
 	private Properties readConfiguration() throws IOException {
 		final InputStream stream = getClass().getResourceAsStream(
-				CONFIG_PATH_PREFIX + modelName + CONFIG_PATH_SUFFIX);
+				ModelConstants.CONFIG_PATH_PREFIX + modelName + ModelConstants.CONFIG_PATH_SUFFIX);
 		Properties config = new Properties();
 		config.load(stream);
 		return config;
 	}
 
 	private String extractFormatVersion(Properties config) {
-		String formatVersion = (String) config.get(CONFIG_FORMAT_VERSION);
+		String formatVersion = (String) config.get(ModelConstants.CONFIG_FORMAT_VERSION);
 		if (formatVersion == null) {
 			logService.log(LogService.LOG_WARNING, "No configuration file version found, defaulting to 1.1");
 			return "1.1";
@@ -222,11 +213,11 @@ public class ModelServiceImpl implements ModelService {
 
 	private void extractProperties_1_1(Properties config) {
 		logService.log(LogService.LOG_INFO, "Configuration file version is 1.1");
-		fileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
-		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
+		fileBaseNames = ((String) config.get("pentacam.files")).split(ModelConstants.COMMA);
+		keyFields = ((String) config.get("pentacam.fields.key")).split(ModelConstants.COMMA);
 		commonFields = ((String) config.get("pentacam.fields.common"))
-				.split(COMMA);
-		usedFields = ((String) config.get("pentacam.fields.used")).split(COMMA);
+				.split(ModelConstants.COMMA);
+		usedFields = ((String) config.get("pentacam.fields.used")).split(ModelConstants.COMMA);
 		for (String fbn : fileBaseNames) {
 			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
 			fields.put(fbn, (String) config.get(fbn + ".fields"));
@@ -235,14 +226,14 @@ public class ModelServiceImpl implements ModelService {
 
 	private void extractProperties_1_2(Properties config) {
 		logService.log(LogService.LOG_INFO, "Configuration file version is 1.2");
-		keyFields = ((String) config.get("pentacam.fields.key")).split(COMMA);
+		keyFields = ((String) config.get("pentacam.fields.key")).split(ModelConstants.COMMA);
 		commonFields = ((String) config.get("pentacam.fields.common"))
-				.split(COMMA);
+				.split(ModelConstants.COMMA);
 		// TODO replace checkFields by a Map<String,List<String>> with a more meaningful name
 		Map<String,String> checkFields = new HashMap<>();
 		Map<String,Map<String,List<String>>> fieldAttributesMap = new HashMap<>();
 		List<String> localUsedFields = new ArrayList<>();
-		List<String> usedFieldDescriptors = Arrays.asList(((String) config.get("pentacam.fields.used")).split(COMMA));
+		List<String> usedFieldDescriptors = Arrays.asList(((String) config.get("pentacam.fields.used")).split(ModelConstants.COMMA));
 		for (String descriptor : usedFieldDescriptors) {
 			FieldDescriptor fd = new FieldDescriptor(descriptor);
 			if (!fd.getFieldAttributes().contains(AttributeNames.DISCRIMINATOR)) {
@@ -272,17 +263,17 @@ public class ModelServiceImpl implements ModelService {
 //			System.out.println("checkFields[" + fbn + "] = " + checkFields.get(fbn));
 //		}
 		
-		String[] localFileBaseNames = ((String) config.get("pentacam.files")).split(COMMA);
+		String[] localFileBaseNames = ((String) config.get("pentacam.files")).split(ModelConstants.COMMA);
 		for (String fbn : localFileBaseNames) {
 			separators.put(fbn, (String) config.get(fbn + ".field.separator"));
 			StringBuilder sb = new StringBuilder();
-			for (String fieldname : checkFields.get(fbn).split(COMMA)) {
+			for (String fieldname : checkFields.get(fbn).split(ModelConstants.COMMA)) {
 				sb.append(fieldname);
 				for (String attr : fieldAttributesMap.get(fbn).get(fieldname)) {
-					sb.append(SEMICOLON);
+					sb.append(ModelConstants.SEMICOLON);
 					sb.append(attr);
 				}
-				sb.append(COMMA);
+				sb.append(ModelConstants.COMMA);
 			}
 			sb.setLength(sb.length() - 1);
 //			System.out.println("     fields[" + fbn + "] = " + sb);
@@ -319,7 +310,7 @@ public class ModelServiceImpl implements ModelService {
 			expectedFieldNames.set(i, normalizeAttributeName(expectedFieldNames.get(i)));
 		}
 		for (String filedesc : fields.values()) {
-			for (String descriptor : filedesc.split(COMMA)) {
+			for (String descriptor : filedesc.split(ModelConstants.COMMA)) {
 				FieldDescriptor fd = new FieldDescriptor(descriptor);
 				if (fd.getFieldAttributes().contains(AttributeNames.DISCRIMINATOR)) {
 					continue;
@@ -345,11 +336,11 @@ public class ModelServiceImpl implements ModelService {
 	}
 	
 	private void fieldNotInModelWarning(String name) {
-		logService.log(LogService.LOG_WARNING, "Configuration file " + CONFIG_PATH_PREFIX + modelName + CONFIG_PATH_SUFFIX + " defines field " + name + " which is not used in model.");
+		logService.log(LogService.LOG_WARNING, "Configuration file " + ModelConstants.CONFIG_PATH_PREFIX + modelName + ModelConstants.CONFIG_PATH_SUFFIX + " defines field " + name + " which is not used in model.");
 	}
 
 	private void missingFieldFromModelError(String name) {
-		logService.log(LogService.LOG_ERROR, "Configuration file " + CONFIG_PATH_PREFIX + modelName + CONFIG_PATH_SUFFIX + " does not define field " + name + " which is used in the model.");
+		logService.log(LogService.LOG_ERROR, "Configuration file " + ModelConstants.CONFIG_PATH_PREFIX + modelName + ModelConstants.CONFIG_PATH_SUFFIX + " does not define field " + name + " which is used in the model.");
 	}
 
 	@Override
@@ -437,6 +428,11 @@ public class ModelServiceImpl implements ModelService {
 			}
 		}
 		return sb.toString();
+	}
+
+	@Override
+	public String getModelName() {
+		return modelName;
 	}
 
 

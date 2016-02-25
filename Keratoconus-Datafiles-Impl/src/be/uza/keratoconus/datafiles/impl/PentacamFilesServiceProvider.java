@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicReference;
@@ -31,7 +32,7 @@ import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.datafiles.api.PentacamFile;
 import be.uza.keratoconus.datafiles.api.PentacamFilesService;
-import be.uza.keratoconus.model.api.ModelService;
+import be.uza.keratoconus.model.api.ModelFileService;
 
 /**
  * This component provides the PentacamFilesService. However it will only
@@ -60,8 +61,9 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	private LogService logService;
 	private AtomicReference<Thread> serviceRegistrationThreadRef = new AtomicReference<>();
 	private AtomicReference<ServiceRegistration> registrationRef = new AtomicReference<>();
-	private ModelService modelService;
+	private ModelFileService modelFileService;
 	private ConfigurationAdmin configurationAdmin;
+	private List<Configuration> componentConfigurations;
 
 	@Reference
 	protected void setConfigurationAdmin(ConfigurationAdmin ca) {
@@ -74,8 +76,8 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	@Reference
-	protected void setModelService(ModelService ms) {
-		this.modelService = ms;
+	protected void setModelFileService(ModelFileService mfs) {
+		this.modelFileService = mfs;
 	}
 
 	@Reference(dynamic = true, multiple = true, optional = true)
@@ -91,6 +93,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	@Activate
 	protected void activate(ComponentContext cc) throws IOException {
 		bundleContext = cc.getBundleContext();
+		componentConfigurations = new CopyOnWriteArrayList<Configuration>();
 		Thread thread = new Thread(() -> {
 			createPentacamFileConfigurations();
 			registerServiceWhenAllFilesArePresent();
@@ -100,7 +103,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	@Deactivate
-	protected void deactivate() {
+	protected void deactivate() throws IOException {
 		Thread thread = serviceRegistrationThreadRef.getAndSet(null);
 		if (thread != null) {
 			thread.interrupt();
@@ -109,25 +112,17 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 		if (registration != null) {
 			registration.unregister();
 		}
+		destroyComponentConfigurations();
 	}
 
 	private void createPentacamFileConfigurations() {
 		fileBaseNames = new ArrayList<>();
 		
-		// BARF
-		while (modelService.getFileBaseNames() == null) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				logService.log(LogService.LOG_ERROR,
-						"Failed to get PentacamFile base names", e);
-			}
-		}
-		for (String fbn : modelService.getFileBaseNames()) {
+		for (String fbn : modelFileService.getFileBaseNames()) {
 			fileBaseNames.add(fbn);
 			fileBaseNames.add(fbn + "-LOAD");
-			String separator = modelService.getSeparatorForFile(fbn);
-			String fields = modelService.getFieldsOfFile(fbn);
+			String separator = modelFileService.getSeparatorForFile(fbn);
+			List<String> fields = modelFileService.getFieldsOfFile(fbn);
 			createComponentConfiguration(
 					BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE, fbn,
 					separator, fields);
@@ -138,7 +133,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 	}
 
 	private void createComponentConfiguration(String factoryPid,
-			String fileBaseName, String separator, String fields) {
+			String fileBaseName, String separator, List<String> fields) {
 		try {
 			Configuration c;
 			c = configurationAdmin.createFactoryConfiguration(factoryPid, null);
@@ -150,6 +145,7 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 					BE_UZA_KERATOCONUS_DATAFILES_IMPL_PENTACAM_CSV_FILE
 							+ " config: " + dict);
 			c.update(dict);
+			componentConfigurations.add(c);
 		} catch (IOException e) {
 			logService.log(LogService.LOG_ERROR,
 					"Failed to launch PentacamCsvFile configuration for "
@@ -157,6 +153,12 @@ public class PentacamFilesServiceProvider implements PentacamFilesService {
 		}
 	}
 
+	private void destroyComponentConfigurations() throws IOException {
+		for (Configuration c : componentConfigurations) {
+			c.delete();
+		}
+	}
+	
 	private void registerServiceWhenAllFilesArePresent() {
 		checkAllFilesPresent();
 		filesReadyLock.lock();
