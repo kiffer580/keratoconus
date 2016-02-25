@@ -21,7 +21,7 @@
 .popup-headline-normal { -fx-fill: green; }
 .popup-headline-bad { -fx-fill: chocolate; }
 
-.popup-explanation { -fx-font-size: 8pt; -fx-background-color: rgba(240, 240, 240, 0.75); -fx-wrap-text: true; -fx-graphic-text-gap: 0px; -fx-padding: 2.5px 5px 2.5px 5px; }
+.popup-explanation { -fx-font-size: 8pt; -fx-background-color: rgba(224, 224, 224, 0.75); -fx-wrap-text: true; -fx-graphic-text-gap: 0px; -fx-padding: 2.5px 5px 2.5px 5px; }
 .popup-explanation-label { -fx-text-fill: inherit; -fx-wrap-text: true; -fx-max-width: 280; }
 
 .popup-detail-button { -fx-font-size: 10pt; -fx-font-weight: bold; -fx-padding: 5px; -fx-background-insets: 5px; -fx-background-radius: 12px; }
