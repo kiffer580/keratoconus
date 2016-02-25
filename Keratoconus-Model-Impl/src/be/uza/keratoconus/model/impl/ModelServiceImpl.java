@@ -23,6 +23,7 @@ import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.ConfigurationPolicy;
 import aQute.bnd.annotation.component.Reference;
+import be.uza.keratoconus.model.api.Face;
 import be.uza.keratoconus.model.api.FieldQualifierNames;
 import be.uza.keratoconus.model.api.ModelService;
 
@@ -310,11 +311,11 @@ public class ModelServiceImpl implements ModelService {
 					continue;
 				}
 				if (fd.getFieldQualifiers().contains(FieldQualifierNames.BIFACIAL)) {
-					if (!expectedFieldNames.remove(fd.getFieldName() + " FRONT")) {
-						fieldNotInModelWarning(fd.getFieldName() + " FRONT");
+					if (!expectedFieldNames.remove(fd.getFieldName() + " " + Face.FRONT)) {
+						fieldNotInModelWarning(fd.getFieldName() + " " + Face.FRONT);
 					}
-					if (!expectedFieldNames.remove(fd.getFieldName() + " BACK")) {
-						fieldNotInModelWarning(fd.getFieldName() + " BACK");
+					if (!expectedFieldNames.remove(fd.getFieldName() + " " + Face.BACK)) {
+						fieldNotInModelWarning(fd.getFieldName() + " " + Face.BACK);
 					}
 				}
 				else if (!expectedFieldNames.remove(fd.getFieldName())) {

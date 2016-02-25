@@ -16,6 +16,7 @@ import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.analysis.api.Analyser;
 import be.uza.keratoconus.datafiles.api.PatientExam;
+import be.uza.keratoconus.model.api.Face;
 import be.uza.keratoconus.model.api.ModelService;
 
 @Component(enabled = true)
@@ -66,14 +67,14 @@ private static final String SEMICOLON = ";";
 				dataLine += fieldValue + SEMICOLON;
 				++nColumns;
 			}
-			else if (examData.containsKey(fieldName + " FRONT")) {
-				headerLine += fieldName + " FRONT" + SEMICOLON;
-				final String frontFieldValue = examData.get(fieldName + " FRONT");
+			else if (examData.containsKey(fieldName + " " + Face.FRONT)) {
+				headerLine += fieldName + " " + Face.FRONT + SEMICOLON;
+				final String frontFieldValue = examData.get(fieldName + " " + Face .FRONT);
 				// TODO fatal error if fieldValue is null?
 				dataLine += frontFieldValue + SEMICOLON;
 				++nColumns;
-				headerLine += fieldName + " BACK" + SEMICOLON;
-				final String backFieldValue = examData.get(fieldName + " BACK");
+				headerLine += fieldName + " " + Face.BACK + SEMICOLON;
+				final String backFieldValue = examData.get(fieldName + " " + Face.BACK);
 				// TODO fatal error if fieldValue is null?
 				dataLine += backFieldValue + SEMICOLON;
 				++nColumns;

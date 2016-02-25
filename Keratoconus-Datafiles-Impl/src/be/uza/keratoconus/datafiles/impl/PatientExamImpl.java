@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 
 import be.uza.keratoconus.datafiles.api.PatientExam;
 import be.uza.keratoconus.datafiles.api.PentacamField;
+import be.uza.keratoconus.model.api.Face;
 
 /**
  * Container for the results of one examination of one eye of one patient on one
@@ -69,11 +70,11 @@ public class PatientExamImpl implements PatientExam {
 			String backValue = cleanUp(backRecord[i]);
 			String existing;
 			if (entry.getKey().isBifacial()) {
-				existing = examData.put(name + " FRONT", frontValue);
+				existing = examData.put(name + " " + Face.FRONT, frontValue);
 				if (existing != null) {
 					duplicateFieldWarning(baseName, name);
 				}
-				existing = examData.put(name + " BACK", backValue);
+				existing = examData.put(name + " " + Face.BACK, backValue);
 				if (existing != null) {
 					duplicateFieldWarning(baseName, name);
 				}

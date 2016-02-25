@@ -32,6 +32,7 @@ import aQute.bnd.annotation.metatype.Meta;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
 import be.uza.keratoconus.datafiles.api.PentacamField;
 import be.uza.keratoconus.datafiles.api.PentacamFile;
+import be.uza.keratoconus.model.api.Face;
 import be.uza.keratoconus.model.api.ModelService;
 
 import com.opencsv.CSVParser;
@@ -235,10 +236,10 @@ public class PentacamCsvFile implements PentacamFile {
 			fieldNames.add(h);
 			PentacamFieldImpl pf = fieldMap.remove(h);
 			if (pf == null) {
-				pf = fieldMap.remove(h + " FRONT");
+				pf = fieldMap.remove(h + " " + Face.FRONT);
 			}
 			if (pf == null) {
-				pf = fieldMap.remove(h + " BACK");
+				pf = fieldMap.remove(h + " " + Face.BACK);
 			}
 			if (pf == null) {
 				allFields.add(new PentacamFieldImpl(h, false, false));
