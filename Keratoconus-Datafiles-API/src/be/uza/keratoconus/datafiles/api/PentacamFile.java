@@ -55,13 +55,6 @@ public interface PentacamFile {
 	 */
 	List<String[]> getNewRecords(long startOffset);
 
-	// /**
-	// * Get all records of the file, from a certain offset in the file
-	// (inclusive) up to a certain offset (exclusive).
-	// * @param startOffset
-	// */
-	// List<String[]> getNewRecords(long startOffset, long endOffset);
-
 	/**
 	 * Get descriptors of all fields of the file, including fields which are not
 	 * used by the application.
