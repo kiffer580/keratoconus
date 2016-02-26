@@ -5,15 +5,21 @@ import java.util.Map.Entry;
 
 import org.osgi.service.event.Event;
 
+import be.uza.keratoconus.configuration.api.Classification.Category;
+
 final class UserPreferencesChangedEvent extends Event {
 	
-	private static final String USERPREFS_CHANGED_TOPIC_PREFIX = "be/kiffer/uza/keratoconus/userprefs/changed/";
+	static final String USERPREFS_CHANGED_TOPIC_PREFIX = "be/kiffer/uza/keratoconus/userprefs/changed/";
 	
 	private Map<String, ?> changedProperties;
 
 	UserPreferencesChangedEvent(String subtopic, Map<String, ?> changedProperties) {
 		super(USERPREFS_CHANGED_TOPIC_PREFIX + subtopic, changedProperties);
 		this.changedProperties = changedProperties;
+	}
+	
+	public Map<String, ?> getChanges() {
+		return changedProperties;
 	}
 	
 	public String toString() {

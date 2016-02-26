@@ -26,7 +26,10 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentConstants;
 import org.osgi.service.component.ComponentContext;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventAdmin;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 import org.osgi.service.log.LogService;
 
 import aQute.bnd.annotation.component.Activate;
@@ -36,6 +39,7 @@ import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.configuration.api.Classification.Category;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
+import be.uza.keratoconus.datafiles.event.FileEventConstants;
 import be.uza.keratoconus.systemtrayapp.api.HtmlViewerService;
 import be.uza.keratoconus.systemtrayapp.api.ShowPageEvent;
 import be.uza.keratoconus.userprefs.api.PreferencesWindow;
@@ -45,9 +49,10 @@ import be.uza.keratoconus.userprefs.impl.UserPreferencesMenu;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-@Component(provide = UserPreferences.class, configurationPolicy = ConfigurationPolicy.ignore)
+@Component(provide = UserPreferences.class, configurationPolicy = ConfigurationPolicy.ignore, properties = EventConstants.EVENT_TOPIC
+		+ "=" + UserPreferencesChangedEvent.USERPREFS_CHANGED_TOPIC_PREFIX)
 public class SystemTrayMenu extends PopupMenu implements ActionListener,
-		UserPreferences {
+		UserPreferences, EventHandler {
 
 	private static final String SELECTED_MODEL_NAME = "selectedModelName";
 
@@ -174,7 +179,6 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		prefsMenu = null;
 	}
 
-	@SuppressWarnings("serial")
 	private void setUpMenu() {
 		addActionListener(this);
 		final MenuItem menuItemAbout = new MenuItem("About " + applicationTitle);
@@ -192,10 +196,9 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 		add(prefsMenu);
 		addSeparator();
 		
-// Suppressed this for the time being at least, because it doesn't work reliably
-//		final MenuItem menuItemRestart = new MenuItem("Restart "
-//				+ applicationTitle);
-//		add(menuItemRestart);
+		final MenuItem menuItemRestart = new MenuItem("Restart "
+				+ applicationTitle);
+		add(menuItemRestart);
 		final MenuItem menuItemExit = new MenuItem("Exit " + applicationTitle);
 		add(menuItemExit);
 	}
@@ -355,27 +358,35 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String command = e.getActionCommand();
+		logInfo("Menu item '" + command + "' selected");
 		if (command != null) {
-			logInfo("Menu item '" + command + "' selected");
-// Suppressed this for the time being at least, because it doesn't work reliably
-//			if (command.startsWith("Restart ")) {
-//				logInfo("Restarting application");
-//				try {
-//					FrameworkUtil.getBundle(
-//							pentacamConfigurationService.getClass()).update();
-//				} catch (BundleException e1) {
-//					logException(e1,
-//							"Exception thrown when restarting framework");
-//				}
-//			}
-			if (command.startsWith("Exit ")) {
-				logInfo("Terminating application");
-				try {
-					ownComponentContext.getBundleContext().getBundle(0).stop();
-				} catch (BundleException e1) {
-					logException(e1, "Exception thrown when stopping framework");
-				}
+			if (command.startsWith("Restart ")) {
+				restartApplication();
 			}
+			if (command.startsWith("Exit ")) {
+				exitApplication();
+			}
+		}
+	}
+
+	private void exitApplication() {
+		logInfo("Terminating application");
+		try {
+			ownComponentContext.getBundleContext().getBundle(0).stop();
+		} catch (BundleException e1) {
+			logException(e1, "Exception thrown when stopping framework");
+		}
+	}
+
+	private void restartApplication() {
+		logInfo("Restarting application");
+		try {
+			FrameworkUtil.getBundle(
+					pentacamConfigurationService.getClass()).update();
+//					ownComponentContext.getBundleContext().getBundle(0).update();
+		} catch (BundleException e1) {
+			logException(e1,
+					"Exception thrown when restarting framework");
 		}
 	}
 
@@ -465,6 +476,17 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	private void logException(Exception e, String message) {
 		logService.log(ownComponentContext.getServiceReference(),
 				LogService.LOG_WARNING, message, e);
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		if (event instanceof UserPreferencesChangedEvent) {
+			UserPreferencesChangedEvent userPreferencesChangedEvent = (UserPreferencesChangedEvent) event;
+			if (userPreferencesChangedEvent.getChanges().keySet().contains(SELECTED_MODEL_NAME)) {
+				restartApplication();
+			}
+		}
+		
 	}
 
 }

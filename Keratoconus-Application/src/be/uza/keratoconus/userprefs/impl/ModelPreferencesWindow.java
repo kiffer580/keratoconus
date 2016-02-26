@@ -37,7 +37,7 @@ public class ModelPreferencesWindow extends AbstractPreferencesWindow implements
 	public ModelPreferencesWindow() {
 		super("Classification model",
 				"Choose the classification model from among those available:",
-				"The application must be restarted in order for the new choice to take effect.");
+				"The application will be restarted in order for the new choice to take effect.");
 	}
 
 	@Reference
