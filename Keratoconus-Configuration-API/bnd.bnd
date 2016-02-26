@@ -1,5 +1,5 @@
 -buildpath: biz.aQute.bnd.annotation
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Export-Package: be.uza.keratoconus.configuration.api
 Bundle-Name: Keratonus Configuration API
 Bundle-Description: Contains the API of the Configuration Service which provides common configuration \

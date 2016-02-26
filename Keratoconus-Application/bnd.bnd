@@ -10,7 +10,7 @@
 	JavaFX-Wrapper;version=latest,\
 	Keratoconus-Datafiles-API;version=latest,\
 	Weka-Wrapper;version=latest
-Bundle-Version: 0.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Private-Package: \
 	be.uza.keratoconus.systemtrayapp,\
 	be.uza.keratoconus.userprefs.api,\

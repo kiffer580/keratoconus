@@ -1,6 +1,6 @@
 
 Include-Resource: /resource
-Bundle-Version: 0.0.0.${tstamp}
+Bundle-Version: 1.0.0.${tstamp}
 Fragment-Host: Keratoconus-Model-Impl
 Import-Package: !*
 

@@ -8,7 +8,7 @@
 	Keratoconus-Datafiles-API;version=latest,\
 	Keratoconus-Model-API;version=latest,\
 	Weka-Wrapper;version=latest
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Private-Package: be.uza.keratoconus.analysis.impl
 Service-Component: *
 Export-Package:  \

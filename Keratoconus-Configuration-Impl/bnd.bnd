@@ -4,7 +4,7 @@
 	biz.aQute.bnd.annotation,\
 	${junit},\
 	Keratoconus-Configuration-API;version=latest
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Private-Package: be.uza.keratoconus.configuration.impl
 Service-Component: *
 Export-Package: be.uza.keratoconus.configuration.api

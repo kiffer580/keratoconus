@@ -4,7 +4,7 @@
 	biz.aQute.bnd.annotation,\
 	${junit},\
 	osgi.core;version=5.0
-Bundle-Version: 1.0.1.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Private-Package:  \
 	be.uza.keratoconus.javafxwrapper
 Include-Resource: /resource	

@@ -6,7 +6,7 @@
 	Keratoconus-Datafiles-API;version=latest,\
 	Keratoconus-Configuration-API;version=latest,\
 	JavaFX-Wrapper;version=latest
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Private-Package: be.uza.keratoconus.logging
 ImportDynamic-Package: *
 ImportPackage: *

@@ -1,7 +1,7 @@
 -buildpath: \
 	biz.aQute.bnd.annotation,\
 	Weka-Wrapper;version=latest
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Export-Package: \
 	be.uza.keratoconus.model.api,\
 	weka.classifiers.*,\

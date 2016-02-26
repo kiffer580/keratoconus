@@ -6,7 +6,7 @@
 	org.apache.felix.metatype,\
 	com.opencsv,\
 	Keratoconus-Configuration-API;version=latest
-Bundle-Version: 1.0.0.${tstamp}
+Bundle-Version: 1.0.2.${tstamp}
 Service-Component:  *
 -metatype: *
 Export-Package:  \
