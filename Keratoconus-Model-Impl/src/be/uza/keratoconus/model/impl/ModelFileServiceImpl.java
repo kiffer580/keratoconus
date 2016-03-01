@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.osgi.service.log.LogService;
-
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
@@ -22,14 +20,8 @@ public class ModelFileServiceImpl implements ModelFileService {
 	private String[] fileBaseNames;
 	private Map<String, String> separators;
 	private Map<String, List<String>> fields;
-	private LogService logService;
 	ModelService modelService;
 	private String modelName;
-
-	@Reference
-	protected void setLogService(LogService ls) {
-		logService = ls;
-	}
 
 	@Reference
 	protected void setModelService(ModelService ms) {
