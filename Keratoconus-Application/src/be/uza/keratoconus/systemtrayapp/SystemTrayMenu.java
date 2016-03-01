@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.stage.StageStyle;
 
@@ -39,8 +38,6 @@ import aQute.bnd.annotation.component.Deactivate;
 import aQute.bnd.annotation.component.Reference;
 import be.uza.keratoconus.configuration.api.Classification.Category;
 import be.uza.keratoconus.configuration.api.PentacamConfigurationService;
-import be.uza.keratoconus.datafiles.event.FileEventConstants;
-import be.uza.keratoconus.systemtrayapp.api.HtmlViewerService;
 import be.uza.keratoconus.systemtrayapp.api.ShowPageEvent;
 import be.uza.keratoconus.userprefs.api.PreferencesWindow;
 import be.uza.keratoconus.userprefs.api.UserPreferences;
@@ -79,7 +76,6 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	private UserPrefsDAO prefs;
 	private LogService logService;
 	private EventAdmin eventAdmin;
-	private HtmlViewerService aboutService;
 	private PentacamConfigurationService pentacamConfigurationService;
 	private UserPreferencesMenu prefsMenu;
 	private Path prefsDirPath;
@@ -111,11 +107,6 @@ public class SystemTrayMenu extends PopupMenu implements ActionListener,
 	@Reference
 	protected void setEventAdmin(EventAdmin s) {
 		eventAdmin = s;
-	}
-
-	@Reference
-	protected void setAboutService(HtmlViewerService s) {
-		aboutService = s;
 	}
 
 	@Reference(dynamic = true, multiple = true, optional = true)

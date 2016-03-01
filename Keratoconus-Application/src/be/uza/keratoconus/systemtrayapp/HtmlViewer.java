@@ -15,11 +15,8 @@ import org.w3c.dom.Document;
 
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Reference;
-import be.uza.keratoconus.datafiles.event.AnalysisResultsEventConstants;
 import be.uza.keratoconus.model.api.AvailableModelsService;
-import be.uza.keratoconus.model.api.ModelService;
 import be.uza.keratoconus.systemtrayapp.api.HtmlViewerService;
-import be.uza.keratoconus.userprefs.api.UserPreferences;
 
 @Component(properties = EventConstants.EVENT_TOPIC
 		+ "=" + HtmlViewerService.SHOWPAGE_TOPIC)

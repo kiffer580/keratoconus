@@ -5,8 +5,6 @@ import java.util.Map.Entry;
 
 import org.osgi.service.event.Event;
 
-import be.uza.keratoconus.configuration.api.Classification.Category;
-
 final class UserPreferencesChangedEvent extends Event {
 	
 	static final String USERPREFS_CHANGED_TOPIC_PREFIX = "be/kiffer/uza/keratoconus/userprefs/changed/";
