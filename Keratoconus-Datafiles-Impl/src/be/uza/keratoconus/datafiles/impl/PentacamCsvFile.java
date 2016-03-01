@@ -14,11 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.log.LogService;
@@ -47,7 +45,6 @@ import com.opencsv.CSVParser;
 public class PentacamCsvFile implements PentacamFile {
 
 	private static final Charset WINDOWS_1252 = Charset.forName("windows-1252");
-	private static final String CONFIG_FILE_LIST_SEPARATOR = ",";
 	private static final String CSV = ".CSV";
 	private final Map<String, String[]> records = new LinkedHashMap<String, String[]>();
 	private String fileName;
