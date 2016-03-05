@@ -7,7 +7,7 @@
 Bundle-Version: 1.0.2.${tstamp}
 Private-Package:  \
 	be.uza.keratoconus.javafxwrapper
-Include-Resource: /resource	
+Include-Resource: resource	
 Service-Component: *
 DynamicImport-Package: *
 ImportPackage: *

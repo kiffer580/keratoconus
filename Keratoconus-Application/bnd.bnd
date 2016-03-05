@@ -16,7 +16,7 @@ Private-Package: \
 	be.uza.keratoconus.userprefs.api,\
 	be.uza.keratoconus.userprefs.impl
 Service-Component: *
-Include-Resource: /libs/image4j.jar
+Include-Resource: libs/image4j.jar
 Bundle-ClassPath: .,image4j.jar
 ImportDynamic-Package: *
 ImportPackage: *
