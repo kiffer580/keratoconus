@@ -3,6 +3,7 @@
 	osgi.cmpn,\
 	biz.aQute.bnd.annotation,\
 	${junit},\
+	org.mockito.mockito-all,\
 	Keratoconus-Model-API;version=latest
 Bundle-Version: 1.0.0.${tstamp}
 Private-Package: be.uza.keratoconus.model.impl
