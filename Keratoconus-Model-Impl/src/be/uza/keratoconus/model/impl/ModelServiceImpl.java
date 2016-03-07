@@ -102,8 +102,6 @@ public class ModelServiceImpl implements ModelService {
 
 	private class ModelAttributes {
 		private final String classAttributeName;
-		private final int classAttributeIndex;
-		private final List<String> classAttributeValues;
 		private final List<String> attributeNames;
 
 		public ModelAttributes(AbstractClassifier classifier) throws NoSuchFieldException,
@@ -126,11 +124,9 @@ public class ModelServiceImpl implements ModelService {
 			Field attributeNameField = Attribute.class
 					.getDeclaredField("m_Name");
 			attributeNameField.setAccessible(true);
-			classAttributeIndex = examineField(classAttribute, "m_Index");
 			NominalAttributeInfo info = examineField(classAttribute,
 					"m_AttributeInfo");
 
-			classAttributeValues = examineField(info, "m_Values");
 			// not needed now but could turn out handy
 			@SuppressWarnings("unused")
 			Hashtable<String, Integer> classHashtable = examineField(info,
@@ -148,14 +144,6 @@ public class ModelServiceImpl implements ModelService {
 
 		private String getClassAttributeName() {
 			return classAttributeName;
-		}
-
-		private int getClassAttributeIndex() {
-			return classAttributeIndex;
-		}
-
-		private List<String> getClassAttributeValues() {
-			return classAttributeValues;
 		}
 
 		private List<String> getAttributeNames() {
@@ -183,6 +171,7 @@ public class ModelServiceImpl implements ModelService {
 	@Activate
 	protected void activate(Map<String, String> props) throws Exception {
 		separators = new HashMap<>();
+		// TODO replace fields by a Map<String,List<String>>
 		fields = new HashMap<>();
 		modelName = props.get(MODEL_NAME);
 		Properties config = readConfiguration();
@@ -372,16 +361,6 @@ public class ModelServiceImpl implements ModelService {
 	}
 
 	@Override
-	public String[] getFileBaseNames() {
-		return fileBaseNames;
-	}
-
-	@Override
-	public String getSeparatorForFile(String fbn) {
-		return separators.get(fbn);
-	}
-
-	@Override
 	public String getFieldsOfFile(String fbn) {
 		return fields.get(fbn);
 	}
@@ -402,26 +381,6 @@ public class ModelServiceImpl implements ModelService {
 		throw new IllegalSerializedModelException(classifier);
 	}
 
-	@Override
-	public String getClassAttributeName() {
-		return modelAttributes == null ? null : modelAttributes.getClassAttributeName();
-	}
-
-	@Override
-	public int getClassAttributeIndex() {
-		return modelAttributes == null ? null : modelAttributes.getClassAttributeIndex();
-	}
-
-	@Override
-	public List<String> getClassAttributeValues() {
-		return modelAttributes == null ? null : modelAttributes.getClassAttributeValues();
-	}
-
-	@Override
-	public List<String> getAttributeNames() {
-		return modelAttributes == null ? null : modelAttributes.getAttributeNames();
-	}
-	
 	@Override
 	public String normalizeAttributeName(String s) {
 		StringBuilder sb = new StringBuilder(s);
