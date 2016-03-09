@@ -2,6 +2,7 @@ package be.uza.keratoconus.javafxwrapper;
 
 import javafx.application.Application;
 import javafx.application.Platform;
+import netscape.javascript.JSObject;
 import aQute.bnd.annotation.component.Activate;
 import aQute.bnd.annotation.component.Component;
 import aQute.bnd.annotation.component.Deactivate;
@@ -21,7 +22,9 @@ import aQute.bnd.annotation.component.Deactivate;
 public class StageServiceLauncher {
 
 	@Activate
-	public void activate() {
+	public void activate() throws ClassNotFoundException {
+		// HACK HACK HACK - get the netscape.javascript package wired up
+		Class.forName(JSObject.class.getName());
 		new Thread(() -> {
 			Thread.currentThread().setContextClassLoader(
 					this.getClass().getClassLoader());

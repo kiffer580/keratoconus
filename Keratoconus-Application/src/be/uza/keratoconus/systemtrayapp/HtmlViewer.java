@@ -21,6 +21,7 @@ package be.uza.keratoconus.systemtrayapp;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Scene;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -29,6 +30,7 @@ import javafx.stage.StageStyle;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventConstants;
 import org.osgi.service.event.EventHandler;
+import org.osgi.service.log.LogService;
 import org.w3c.dom.Document;
 
 import aQute.bnd.annotation.component.Component;
@@ -43,10 +45,17 @@ public class HtmlViewer implements HtmlViewerService, EventHandler {
 	private Stage theStage;
 	private WebView webView;
 	private AvailableModelsService availableModelsService;
+	private LogService logService;
+	private VBox viewPane;
 	
 	@Reference
 	protected void setAvailableModelsService(AvailableModelsService ams) {
 		availableModelsService = ams;
+	}
+
+	@Reference
+	protected void setLogService(LogService ls) {
+		logService = ls;
 	}
 
 	@Override
@@ -64,12 +73,16 @@ public class HtmlViewer implements HtmlViewerService, EventHandler {
 		webEngine.load("file:///"
 				+ System.getProperty("user.dir").replace('\\', '/') + path);
 		webEngine.documentProperty().addListener(this::changed);
-		Scene scene = new Scene(webView);
+		
+		viewPane = new VBox(webView);
+		Scene scene = new Scene(viewPane);
+		webEngine.getLoadWorker().stateProperty().addListener(
+				new HtmlViewerStateListener(webEngine, logService));
 		theStage.setTitle(title);
 		theStage.setScene(scene);
 		theStage.show();
 	}
-
+	
 	/**
 	 * Once the document has been loaded, if it contains an element (e.g. a div) with the id
 	 * 'shrinkwrap' then resize the webview to neatly enclose this element.
@@ -81,16 +94,15 @@ public class HtmlViewer implements HtmlViewerService, EventHandler {
 			ObservableValue<? extends Document> prop,
 			Document oldDoc, Document newDoc) {
 		try {
-			String heightString = webView
-					.getEngine()
+			WebEngine webEngine = webView.getEngine();
+			String heightString = webEngine
 					.executeScript(
 							"window.getComputedStyle(document.getElementById('shrinkwrap'), null).getPropertyValue('height')")
 					.toString();
 			double height = Double.valueOf(heightString.replace(
 					"px", ""));
 
-			String widthString = webView
-					.getEngine()
+			String widthString = webEngine
 					.executeScript(
 							"window.getComputedStyle(document.getElementById('shrinkwrap'), null).getPropertyValue('width')")
 					.toString();
@@ -101,13 +113,14 @@ public class HtmlViewer implements HtmlViewerService, EventHandler {
 				webView.setPrefHeight(height + 10);
 				webView.setPrefWidth(width);
 				String selectedModelName = availableModelsService.getSelectedModelName();
-				webView.getEngine().executeScript("document.getElementById('modelname').textContent='" + selectedModelName + "'");
-				webView.getEngine().executeScript("document.getElementById('modeldescription').textContent='" + availableModelsService.getModelDescription(selectedModelName) + "'");
+				webEngine.executeScript("document.getElementById('modelname').textContent='" + selectedModelName + "'");
+				webEngine.executeScript("document.getElementById('modeldescription').textContent='" + availableModelsService.getModelDescription(selectedModelName) + "'");
 				theStage.sizeToScene();
 			});
 		} catch (Exception e) {
 			// Don't worry too much if it doesn't work - if e.g. there is no 'shrinkwrap'
 			// element then we just let the window have the default size (800x600).
+			logService.log(LogService.LOG_INFO, "failed to shrink window to size of 'shrinkwrap' div", e);
 		}
 	}
 }

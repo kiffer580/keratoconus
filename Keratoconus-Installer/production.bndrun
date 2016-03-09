@@ -20,20 +20,21 @@
 	javafx.scene,javafx.scene.canvas,javafx.scene.chart,javafx.scene.control,\
 	javafx.scene.image,javafx.scene.input,javafx.scene.layout,\
 	javafx.scene.paint,javafx.scene.text,javafx.scene.shape,javafx.scene.web,\
-	javafx.stage,javafx.util,com.apple.eawt
+	javafx.stage,javafx.util,com.apple.eawt,netscape.javascript
 
 -resolve.effective: active;skip:="osgi.service"
 
 -runbundles: \
-	JavaFX-Wrapper;version='[1.0.1,1.0.2)',\
-	Keratoconus-Analysis-Impl;version='[1.0.0,1.0.1)',\
-	Keratoconus-Application;version='[0.0.0,0.0.1)',\
-	Keratoconus-Configuration-Impl;version='[1.0.0,1.0.1)',\
-	Keratoconus-Datafiles-Impl;version='[1.0.0,1.0.1)',\
-	Keratoconus-Logging;version='[1.0.0,1.0.1)',\
-	Keratoconus-Model-Edegem;version='[0.0.0,0.0.1)',\
-	Keratoconus-Model-Impl;version='[0.0.0,0.0.1)',\
-	Keratoconus-Model-Paris;version='[0.0.0,0.0.1)',\
+	JavaFX-Wrapper;version='[1.0.2,1.0.3)',\
+	Keratoconus-Analysis-Impl;version='[1.0.2,1.0.3)',\
+	Keratoconus-Application;version='[1.0.2,1.0.3)',\
+	Keratoconus-Configuration-Impl;version='[1.0.2,1.0.3)',\
+	Keratoconus-Datafiles-Impl;version='[1.0.2,1.0.3)',\
+	Keratoconus-Logging;version='[1.0.2,1.0.3)',\
+	Keratoconus-Model-Edegem;version='[1.0.0,1.0.1)',\
+	Keratoconus-Model-Impl;version='[1.0.0,1.0.1)',\
+	Keratoconus-Model-Mk3;version='[1.0.0,1.0.1)',\
+	Keratoconus-Model-Paris;version='[1.0.0,1.0.1)',\
 	Weka-Wrapper;version='[3.7.12,3.7.13)',\
 	biz.aQute.bnd.annotation;version='[3.0.0,3.0.1)',\
 	biz.aQute.bndlib;version='[3.0.0,3.0.1)',\
@@ -62,4 +63,5 @@
 	osgi.identity;filter:='(osgi.identity=org.apache.felix.fileinstall)',\
 	osgi.identity;filter:='(osgi.identity=Keratoconus-Model-Impl)',\
 	osgi.identity;filter:='(osgi.identity=Keratoconus-Model-Edegem)',\
-	osgi.identity;filter:='(osgi.identity=Keratoconus-Model-Paris)'
+	osgi.identity;filter:='(osgi.identity=Keratoconus-Model-Paris)',\
+	osgi.identity;filter:='(osgi.identity=Keratoconus-Model-Mk3)'

@@ -9,11 +9,11 @@ Private-Package:  \
 	be.uza.keratoconus.javafxwrapper
 Include-Resource: resource	
 Service-Component: *
-DynamicImport-Package: *
+#DynamicImport-Package: *
 ImportPackage: *
 Export-Package: \
 	be.uza.keratoconus.javafxwrapper.api,\
-	javafx.*
+	javafx.*,netscape.javascript
 Bundle-Name: JavaFX Wrapper
 Bundle-Description: Wraps the horribly retarded JavaFX API into something a modern application \
 	can think of using.
