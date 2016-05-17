@@ -1,5 +1,8 @@
  	body { -fx-font-smoothing-type: gray; height: 100px; }
     h1 { font: bold  14pt Verdana,sans-serif; text-align: center; }
+
+    h2 { font: bold  12pt Verdana,sans-serif; text-align: center; }
+
     p.blurb { font: 11pt Verdana,sans-serif; text-align: center; }
-    p.licence { font: 9pt Verdana,sans-serif; text-align: justify; }
+    p.license { font: 9pt Verdana,sans-serif; text-align: justify; }
 
